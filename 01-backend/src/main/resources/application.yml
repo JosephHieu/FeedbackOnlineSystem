@@ -3,14 +3,20 @@ spring:
     name: feedback-online
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/feedback_db
+    url: jdbc:postgresql://localhost:5432/feedback_online_system_db?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true
     username: postgres
-    password: your_password
+    password: hieu15102004
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      pool-name: MyHikariCP
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
