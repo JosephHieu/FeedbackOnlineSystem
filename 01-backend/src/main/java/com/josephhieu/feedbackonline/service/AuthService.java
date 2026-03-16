@@ -1,0 +1,9 @@
+package com.josephhieu.feedbackonline.service;
+
+import com.josephhieu.feedbackonline.dto.request.LoginRequest;
+import com.josephhieu.feedbackonline.dto.response.AuthResponse;
+
+public interface AuthService {
+
+    AuthResponse login(LoginRequest request);
+}
