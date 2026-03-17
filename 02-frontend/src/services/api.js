@@ -7,27 +7,22 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+// Tự động gắn Token vào mỗi request nếu có
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
+// Xử lý dữ liệu trả về và lỗi tập trung
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-    }
-    return Promise.reject(
-      error.response?.data || error.message || "An error occurred",
-    );
+    const message =
+      error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại";
+    return Promise.reject({ message, status: error.response?.status });
   },
 );
 

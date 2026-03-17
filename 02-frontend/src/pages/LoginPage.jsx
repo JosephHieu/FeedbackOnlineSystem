@@ -96,20 +96,8 @@ const LoginPage = () => {
               </a>
 
               <hr className="my-2 border-gray-200" />
-
-              <div className="text-center pt-2">
-                <button
-                  type="button"
-                  className="bg-[#42b72a] hover:bg-[#36a420] text-white font-bold py-3 px-6 rounded-md transition duration-200"
-                >
-                  Tạo tài khoản mới
-                </button>
-              </div>
             </form>
           </div>
-          <p className="text-center mt-6 text-sm text-gray-600">
-            <b>Tạo một Trang</b> dành cho tổ chức hoặc doanh nghiệp.
-          </p>
         </div>
       </div>
     </div>

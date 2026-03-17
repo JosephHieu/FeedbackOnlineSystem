@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./AuthContext"; // Import context từ file trên
 
 export const AuthProvider = ({ children }) => {
-  // Khởi tạo state trực tiếp từ localStorage (Tránh cascading renders)
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
