@@ -1,3 +1,4 @@
+import { useAuth } from "./hooks/useAuth";
 import {
   BrowserRouter as Router,
   Routes,
@@ -5,16 +6,17 @@ import {
   Navigate,
 } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import { useAuth } from "./hooks/useAuth";
-import AdminLayout from "./components/layout/AdminLayout"; // Import Layout mới
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLayout from "./components/layout/AdminLayout";
+import UserLayout from "./components/layout/UserLayout"; // Layout dành cho User
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center h-screen bg-[#f8fafc]">
+        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
 
@@ -42,7 +44,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Admin Routes - Đã tích hợp Layout */}
+        {/* Admin Routes - Có Sidebar */}
         <Route
           path="/admin"
           element={
@@ -51,39 +53,51 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* Các Route con sẽ được render vào vị trí <Outlet /> trong AdminLayout */}
-          <Route
-            path="dashboard"
-            element={
-              <div className="text-2xl font-bold">Trang quản trị hệ thống</div>
-            }
-          />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="classes" element={<div>Quản lý lớp học</div>} />
           <Route path="students" element={<div>Quản lý học viên</div>} />
-          {/* Thêm các trang khác tương ứng với Sidebar ở đây */}
+          <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
+          <Route path="topics" element={<div>Quản lý chủ đề</div>} />
+          <Route path="templates" element={<div>Quản lý mẫu feedback</div>} />
 
-          {/* Tự động redirect từ /admin sang /admin/dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 
-        {/* User Routes */}
+        {/* User Routes - Không có Sidebar */}
         <Route
           path="/user"
           element={
             <ProtectedRoute allowedRoles={["ROLE_USER"]}>
-              {/* Nếu bạn làm UserLayout sau này thì bọc ở đây tương tự Admin */}
-              <div className="p-8">Chào mừng học viên</div>
+              <UserLayout />
             </ProtectedRoute>
           }
         >
-          <Route path="home" element={<div>Trang chủ học viên</div>} />
+          <Route
+            path="home"
+            element={
+              <div className="text-xl font-semibold">
+                Chọn topic cần feedback
+              </div>
+            }
+          />
+          <Route index element={<Navigate to="home" replace />} />
         </Route>
 
+        {/* 404 Page */}
         <Route
           path="*"
           element={
-            <div className="flex items-center justify-center min-h-screen font-bold text-gray-500">
-              404 - Trang không tồn tại
+            <div className="flex flex-col items-center justify-center h-screen bg-white">
+              <h1 className="text-9xl font-black text-indigo-100">404</h1>
+              <p className="text-xl font-bold text-slate-600 -mt-10">
+                Trang không tồn tại
+              </p>
+              <button
+                onClick={() => window.history.back()}
+                className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
+              >
+                Quay lại
+              </button>
             </div>
           }
         />

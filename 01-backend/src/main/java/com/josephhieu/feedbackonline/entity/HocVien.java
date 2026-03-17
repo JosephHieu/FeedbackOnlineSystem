@@ -15,6 +15,9 @@ public class HocVien extends BaseEntity {
     @Column(name = "\"MaHocVien\"", updatable = false, nullable = false)
     private UUID maHocVien;
 
+    @Column(name = "\"Username\"", unique = true, nullable = false)
+    private String username;
+
     @Column(name = "\"TenHocVien\"", nullable = false)
     private String tenHocVien;
 
