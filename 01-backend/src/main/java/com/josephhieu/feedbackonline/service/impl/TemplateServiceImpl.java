@@ -4,6 +4,7 @@ import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.TemplateRequest;
 import com.josephhieu.feedbackonline.dto.response.TemplateResponse;
+import com.josephhieu.feedbackonline.entity.CauHoi;
 import com.josephhieu.feedbackonline.entity.Template;
 import com.josephhieu.feedbackonline.mapper.TemplateMapper;
 import com.josephhieu.feedbackonline.repository.TemplateRepository;
@@ -25,6 +26,8 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     @Transactional
     public TemplateResponse createTemplate(TemplateRequest request) {
+
+        validateScores(request.getDanhSachCauHoi());
 
         if (templateRepository.existsByTenTemplate(request.getTenTemplate())) {
             throw new AppException(ErrorCode.TEMPLATE_EXISTED);
@@ -49,6 +52,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
+    @Transactional
     public void deleteTemplate(UUID id) {
 
         Template template = templateRepository.findById(id)
@@ -56,5 +60,39 @@ public class TemplateServiceImpl implements TemplateService {
 
         template.setStatus(false);
         templateRepository.save(template);
+    }
+
+    @Override
+    @Transactional
+    public TemplateResponse updateTemplate(UUID id, TemplateRequest request) {
+
+        Template existingTemplate = templateRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
+
+        validateScores(request.getDanhSachCauHoi());
+
+        existingTemplate.setTenTemplate(request.getTenTemplate());
+
+        existingTemplate.getDanhSachCauHoi().clear();
+
+        List<CauHoi> newCauHois = request.getDanhSachCauHoi().stream()
+                .map(req -> {
+                    CauHoi ch = templateMapper.toCauHoiEntity(req);
+                    ch.setTemplate(existingTemplate);
+                    return ch;
+                }).toList();
+
+        existingTemplate.getDanhSachCauHoi().addAll(newCauHois);
+        return templateMapper.toResponse(templateRepository.save(existingTemplate));
+    }
+
+    private void validateScores(List<TemplateRequest.CauHoiRequest> danhSachCauHoi) {
+        if (danhSachCauHoi != null) {
+            for (var req : danhSachCauHoi) {
+                if (req.getDiemToiThieu() > req.getDiemToiDa()) {
+                    throw new AppException(ErrorCode.INVALID_SCORE_RANGE);
+                }
+            }
+        }
     }
 }

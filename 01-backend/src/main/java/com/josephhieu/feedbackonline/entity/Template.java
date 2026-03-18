@@ -22,6 +22,6 @@ public class Template extends BaseEntity {
     @Column(name = "\"Status\"")
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CauHoi> danhSachCauHoi;
 }

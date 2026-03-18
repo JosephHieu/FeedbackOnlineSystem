@@ -20,17 +20,23 @@ public enum ErrorCode {
     // VALIDATION ERRORS
     INVALID_PASSWORD(1008, "Mật khẩu phải có ít nhất 8 ký tự", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME(1009, "Tên đăng nhập không đúng định dạng", HttpStatus.BAD_REQUEST),
+    FORBIDDEN(1010, "Bạn không có quyền truy cập tài nguyên này", HttpStatus.FORBIDDEN),
 
     // TEMPLATE ERRORS
     TEMPLATE_NOT_EXISTED(2001, "Mẫu feedback không tồn tại", HttpStatus.NOT_FOUND),
     TEMPLATE_EXISTED(2002, "Tên mẫu feedback đã tồn tại", HttpStatus.BAD_REQUEST),
     TEMPLATE_IN_USE(2003, "Mẫu feedback đang được sử dụng bởi một lớp học, không thể xóa", HttpStatus.CONFLICT),
+    INVALID_SCORE_RANGE(2004, "Điểm tối thiểu không được lớn hơn điểm tối đa", HttpStatus.BAD_REQUEST),
 
     // CLASS (LOP) ERRORS
     CLASS_NOT_EXISTED(3001, "Lớp học không tồn tại", HttpStatus.NOT_FOUND),
     CLASS_EXISTED(3002, "Tên lớp học đã tồn tại", HttpStatus.BAD_REQUEST),
-    ;
 
+    // Nhóm lỗi Request
+    METHOD_NOT_SUPPORTED(4005, "Phương thức HTTP không được hỗ trợ", HttpStatus.METHOD_NOT_ALLOWED),
+    INVALID_JSON(4006, "Dữ liệu gửi lên không đúng định dạng", HttpStatus.BAD_REQUEST),
+
+    ;
     ErrorCode(int code, String message, HttpStatus statusCode) {
         this.code = code;
         this.message = message;

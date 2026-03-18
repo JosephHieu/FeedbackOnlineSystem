@@ -13,4 +13,6 @@ public interface TemplateService {
     List<TemplateResponse> getAllActiveTemplates();
 
     void deleteTemplate(UUID id);
+
+    TemplateResponse updateTemplate(UUID id, TemplateRequest request);
 }
