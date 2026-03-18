@@ -49,6 +49,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
+                        .requestMatchers("/api/v1/templates/**").hasRole("ADMIN")
+
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
@@ -73,8 +75,11 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Trace_Id"));
+
+        configuration.setExposedHeaders(List.of("X-Trace-Id"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

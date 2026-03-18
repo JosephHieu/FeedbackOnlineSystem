@@ -33,14 +33,6 @@ const AdminDashboard = () => {
     <div className="flex flex-col h-full animate-fade-in">
       {/* 1. Header của trang */}
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-3xl font-black text-slate-800 tracking-tight">
-            Bảng điều khiển
-          </h2>
-          <p className="text-slate-400 font-medium mt-1">
-            Chào mừng trở lại, hệ thống đã sẵn sàng.
-          </p>
-        </div>
         <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm flex items-center gap-3">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
           <span className="text-sm font-bold text-slate-600">

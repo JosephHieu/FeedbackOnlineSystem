@@ -7,13 +7,13 @@ const AdminSidebar = ({ isOpen }) => {
     { name: "Lớp học", path: "/admin/classes", icon: "ri-community-line" },
     { name: "Học viên", path: "/admin/students", icon: "ri-user-smile-line" },
     {
-      name: "Giảng viên",
+      name: "Trainer",
       path: "/admin/trainers",
       icon: "ri-presentation-line",
     },
-    { name: "Chủ đề", path: "/admin/topics", icon: "ri-bookmark-3-line" },
+    { name: "Topic", path: "/admin/topics", icon: "ri-bookmark-3-line" },
     {
-      name: "Mẫu Feedback",
+      name: "Template",
       path: "/admin/templates",
       icon: "ri-file-list-3-line",
     },
@@ -33,51 +33,51 @@ const AdminSidebar = ({ isOpen }) => {
 
   return (
     <aside
-      className={`bg-white border-r border-gray-100 transition-all duration-300 ease-in-out flex flex-col shadow-sm sticky top-16 z-40 ${
-        isOpen ? "w-80" : "w-20"
-      } h-[calc(100vh-64px)]`} // Chiều cao cố định trừ đi Header
+      className={`
+        /* Layout cơ bản */
+        bg-white border-r border-gray-100 flex flex-col shadow-xl lg:shadow-none 
+        fixed lg:sticky top-16 z-40 h-[calc(100vh-64px)] transition-all duration-300
+        
+        /* Xử lý Mobile: Ẩn hẳn sang trái (-100%) khi đóng */
+        ${isOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0 lg:w-20"}
+      `}
     >
-      {/* Container chứa menu: Dùng hide-scrollbar để ẩn thanh cuộn */}
       <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar">
         <nav className="space-y-1.5">
           {menuItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
-              title={!isOpen ? item.name : ""}
               className={({ isActive }) =>
                 `flex items-center gap-5 px-5 py-4 rounded-2xl transition-all duration-300 group relative ${
                   isActive
-                    ? "bg-indigo-600 text-white shadow-xl shadow-indigo-100"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-indigo-600"
                 }`
               }
             >
-              <i
-                className={`${item.icon} text-2xl flex-shrink-0 ${
-                  item.name === "Xóa toàn bộ" &&
-                  "text-rose-500 group-[.active]:text-white"
-                }`}
-              ></i>
+              {({ isActive }) => (
+                <>
+                  <i className={`${item.icon} text-2xl flex-shrink-0`}></i>
 
-              <span
-                className={`text-[16px] font-bold tracking-wide whitespace-nowrap transition-all duration-500 ${
-                  !isOpen
-                    ? "opacity-0 invisible w-0 translate-x-10"
-                    : "opacity-100 visible w-auto translate-x-0"
-                }`}
-              >
-                {item.name}
-              </span>
+                  {/* Chữ: Ẩn khi Sidebar thu nhỏ trên Desktop, nhưng HIỆN khi mở trên Mobile */}
+                  <span
+                    className={`text-[15px] font-bold whitespace-nowrap transition-all duration-200 ${
+                      !isOpen
+                        ? "lg:opacity-0 lg:invisible lg:w-0"
+                        : "opacity-100 visible w-auto"
+                    }`}
+                  >
+                    {item.name}
+                  </span>
 
-              {/* Chấm tròn nhỏ thay thế cho thanh dọc khi Active ở chế độ thu nhỏ */}
-              {({ isActive }) =>
-                isActive && (
-                  <div
-                    className={`absolute right-3 w-1.5 h-6 bg-white/30 rounded-full ${!isOpen && "right-2"}`}
-                  ></div>
-                )
-              }
+                  {isActive && (
+                    <div
+                      className={`absolute right-3 w-1.5 h-6 bg-white/30 rounded-full ${!isOpen && "lg:hidden"}`}
+                    ></div>
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>

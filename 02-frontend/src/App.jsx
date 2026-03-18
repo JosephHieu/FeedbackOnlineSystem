@@ -1,4 +1,5 @@
 import { useAuth } from "./hooks/useAuth";
+import { Toaster } from "react-hot-toast";
 import {
   BrowserRouter as Router,
   Routes,
@@ -39,6 +40,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 function App() {
   return (
     <Router>
+      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -59,6 +61,14 @@ function App() {
           <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
           <Route path="topics" element={<div>Quản lý chủ đề</div>} />
           <Route path="templates" element={<div>Quản lý mẫu feedback</div>} />
+
+          <Route path="assign" element={<div>Trang gán Topic</div>} />
+          <Route
+            path="pending"
+            element={<div>Trang học viên chưa Feedback</div>}
+          />
+          <Route path="export" element={<div>Trang xuất kết quả</div>} />
+          <Route path="clear" element={<div>Trang xóa dữ liệu</div>} />
 
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

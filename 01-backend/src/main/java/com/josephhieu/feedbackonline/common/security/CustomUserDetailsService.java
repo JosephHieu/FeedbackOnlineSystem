@@ -7,6 +7,7 @@ import com.josephhieu.feedbackonline.entity.HocVien;
 import com.josephhieu.feedbackonline.repository.AdminRepository;
 import com.josephhieu.feedbackonline.repository.HocVienRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
@@ -29,6 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 1. Check Admin
         Optional<Admin> admin = adminRepository.findByUsername(username);
         if (admin.isPresent()) {
+            log.info(">>> Admin '{}' logged in with ROLE_ADMIN", username);
             return CustomUserDetails.builder()
                     .username(admin.get().getUsername())
                     .password(admin.get().getPassword())

@@ -6,9 +6,8 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="bg-[#2c2e33] h-16 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md">
-      <div className="flex items-center gap-4">
-        {/* Chỉ hiển thị nút Toggle nếu showToggle là true */}
+    <header className="bg-[#2c2e33] h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-50 shadow-md">
+      <div className="flex items-center gap-2 md:gap-4">
         {showToggle && (
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -17,45 +16,51 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
             <i
               className={
                 isSidebarOpen
-                  ? "ri-indent-decrease text-2xl"
-                  : "ri-indent-increase text-2xl"
+                  ? "ri-indent-decrease text-xl md:text-2xl"
+                  : "ri-indent-increase text-xl md:text-2xl"
               }
             ></i>
           </button>
         )}
 
         <div className="flex items-center gap-2 select-none">
-          <i className="ri-computer-line text-purple-500 text-2xl font-bold"></i>
-          <h1 className="text-white text-xl font-bold tracking-tight">
-            Feedback-<span className="text-purple-400">Online</span>
+          <i className="ri-computer-line text-purple-500 text-xl md:text-2xl font-bold"></i>
+          {/* Ẩn chữ Online hoặc thu nhỏ chữ trên Mobile */}
+          <h1 className="text-white text-lg md:text-xl font-bold tracking-tight">
+            FB
+            <span className="hidden xs:inline">
+              -<span className="text-purple-400">Online</span>
+            </span>
           </h1>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Nút 1: Username */}
-        <div className="bg-[#3e4148] border border-gray-600 px-4 py-1.5 rounded flex items-center gap-2 text-white cursor-default">
+      <div className="flex items-center gap-1.5 md:gap-2">
+        {/* Username: Trên mobile chỉ hiện icon và tên ngắn */}
+        <div className="bg-[#3e4148] border border-gray-600 px-2 md:px-4 py-1.5 rounded flex items-center gap-2 text-white">
           <i className="ri-user-fill text-sm text-gray-400"></i>
-          <span className="text-sm font-semibold uppercase tracking-wide">
+          <span className="text-xs md:text-sm font-semibold uppercase truncate max-w-[60px] md:max-w-none">
             {user?.username || "Guest"}
           </span>
         </div>
 
-        {/* Nút 2: Đổi mật khẩu */}
-        <button className="bg-[#3e4148] hover:bg-[#4a4d55] border border-gray-600 px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all active:scale-95">
+        {/* Đổi mật khẩu: Ẩn chữ trên mobile, chỉ hiện icon */}
+        <button className="bg-[#3e4148] hover:bg-[#4a4d55] border border-gray-600 px-2 md:px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all">
           <i className="ri-wrench-line text-sm text-gray-400"></i>
-          <span className="text-sm font-medium whitespace-nowrap">
+          <span className="hidden sm:inline text-sm font-medium">
             Đổi mật khẩu
           </span>
         </button>
 
-        {/* Nút 3: Đăng xuất */}
+        {/* Đăng xuất: Ẩn chữ trên mobile, chỉ hiện icon và đổi màu hover nhanh */}
         <button
           onClick={logout}
-          className="bg-[#3e4148] hover:bg-rose-600 border border-gray-600 px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all group active:scale-95"
+          className="bg-[#3e4148] hover:bg-rose-600 border border-gray-600 px-2 md:px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all group"
         >
           <i className="ri-logout-box-r-line text-sm text-gray-400 group-hover:text-white"></i>
-          <span className="text-sm font-medium">Đăng xuất</span>
+          <span className="hidden sm:inline text-sm font-medium">
+            Đăng xuất
+          </span>
         </button>
       </div>
     </header>

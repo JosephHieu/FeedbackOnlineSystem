@@ -17,20 +17,30 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await authService.login(username, password);
-      if (response.result) {
-        localStorage.setItem("token", response.result.token);
+      // response ở đây chính là data.result từ Backend trả về (do api.js đã xử lý)
+      const userData = await authService.login(username, password);
+
+      if (userData) {
+        // 1. Lưu token (Nếu authService chưa lưu)
+        localStorage.setItem("token", userData.token);
+
+        // 2. Cập nhật state trong Context để ProtectedRoute nhận biết được
         login({
-          username: response.result.username,
-          role: response.result.role,
+          username: userData.username,
+          role: userData.role,
         });
-        navigate(
-          response.result.role === "ROLE_ADMIN"
-            ? "/admin/dashboard"
-            : "/user/home",
-        );
+
+        // 3. Thông báo (Tùy chọn nếu api.js chưa làm)
+        // toast.success("Chào mừng trở lại!");
+
+        // 4. Điều hướng
+        const targetPath =
+          userData.role === "ROLE_ADMIN" ? "/admin/dashboard" : "/user/home";
+
+        navigate(targetPath);
       }
     } catch (err) {
+      // Lấy message lỗi từ object lỗi mà api.js đã format
       setError(err.message || "Thông tin đăng nhập không chính xác.");
     } finally {
       setLoading(false);
@@ -87,13 +97,6 @@ const LoginPage = () => {
                   "Đăng nhập"
                 )}
               </button>
-
-              <a
-                href="#"
-                className="text-blue-600 text-center text-sm hover:underline mt-2"
-              >
-                Quên mật khẩu?
-              </a>
 
               <hr className="my-2 border-gray-200" />
             </form>

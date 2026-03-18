@@ -2,13 +2,24 @@ import api from "./api";
 
 export const authService = {
   /**
-   * Gửi yêu cầu đăng nhập về Backend
-   * @param {string} username
-   * @param {string} password
-   * @returns {Promise} Trả về ApiResponse từ Backend
+   * Đăng nhập và lưu trữ phiên làm việc
    */
   login: async (username, password) => {
-    return api.post("/auth/login", { username, password });
+    // Không cần try/catch nếu chỉ để throw lại
+    const data = await api.post("/auth/login", { username, password });
+
+    if (data) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: data.username,
+          role: data.role,
+        }),
+      );
+    }
+
+    return data;
   },
 
   /**
@@ -17,6 +28,22 @@ export const authService = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    // Sử dụng replace để tránh người dùng bấm "Back" quay lại trang cũ
+    window.location.replace("/login");
+  },
+
+  /**
+   * Helper để kiểm tra trạng thái đăng nhập nhanh
+   */
+  isAuthenticated: () => {
+    return !!localStorage.getItem("token");
+  },
+
+  /**
+   * Lấy thông tin User hiện tại
+   */
+  getCurrentUser: () => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
   },
 };
