@@ -8,7 +8,7 @@ const api = axios.create({
   },
 });
 
-// Tự động gắn Token vào mỗi request nếu có
+// 1. Request Interceptor: Gắn Token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -17,40 +17,50 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Xử lý Response tập trung dựa trên cấu trúc ApiResponse từ Java
+// 2. Response Interceptor: Xử lý dữ liệu trả về
 api.interceptors.response.use(
   (response) => {
     const data = response.data;
-    if (data && data.code === 1000) {
-      // Nếu có message thành công từ Backend (như "Tạo thành công"), hiện luôn
-      if (data.message && response.config.method !== "get") {
-        toast.success(data.message);
+
+    // TH1: Dữ liệu trả về đúng cấu trúc ApiResponse { code, result, message, ... }
+    if (data && typeof data === "object" && "code" in data) {
+      if (data.code === 1000) {
+        // Hiện thông báo nếu là các thao tác thay đổi dữ liệu (POST, PUT, DELETE)
+        if (data.message && response.config.method !== "get") {
+          toast.success(data.message);
+        }
+        return data.result; // Trả về phần lõi dữ liệu cho Component
+      } else {
+        // Nếu có code nhưng không phải 1000 (Lỗi nghiệp vụ từ Backend)
+        toast.error(data.message || "Đã có lỗi xảy ra");
+        return Promise.reject(data);
       }
-      return data.result;
     }
-    return Promise.reject(data);
+
+    // TH2: Backend trả về dữ liệu trực tiếp (Mảng hoặc Object không bọc ApiResponse)
+    // Miễn là HTTP Status là 2xx (Thành công)
+    return data;
   },
   (error) => {
+    // Xử lý lỗi HTTP (401, 403, 404, 500...)
     const apiError = error.response?.data;
+    const errorMessage =
+      apiError?.message || error.message || "Lỗi kết nối hệ thống";
 
-    // 2. Tự động hiện Toast lỗi từ Backend trả về
-    const errorMessage = apiError?.message || "Lỗi kết nối hệ thống";
-    toast.error(errorMessage);
-
-    if (apiError?.traceId) {
-      console.error(`[API Error] TraceId: ${apiError.traceId}`);
+    // Không hiện toast lỗi nếu là lỗi 401 (để tránh hiện đè lên trang login)
+    if (error.response?.status !== 401) {
+      toast.error(errorMessage);
     }
 
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // Tránh lặp vô tận nếu đang ở trang login rồi
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
     }
 
-    return Promise.reject({
-      message: errorMessage,
-      code: apiError?.code,
-      traceId: apiError?.traceId,
-    });
+    return Promise.reject(error);
   },
 );
 

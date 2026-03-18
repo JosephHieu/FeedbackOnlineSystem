@@ -9,7 +9,9 @@ import {
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLayout from "./components/layout/AdminLayout";
-import UserLayout from "./components/layout/UserLayout"; // Layout dành cho User
+import UserLayout from "./components/layout/UserLayout";
+import TemplateListPage from "./pages/admin/templates/TemplateListPage";
+import TemplateFormPage from "./pages/admin/templates/TemplateFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -60,7 +62,9 @@ function App() {
           <Route path="students" element={<div>Quản lý học viên</div>} />
           <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
           <Route path="topics" element={<div>Quản lý chủ đề</div>} />
-          <Route path="templates" element={<div>Quản lý mẫu feedback</div>} />
+
+          <Route path="templates" element={<TemplateListPage />} />
+          <Route path="templates/create" element={<TemplateFormPage />} />
 
           <Route path="assign" element={<div>Trang gán Topic</div>} />
           <Route

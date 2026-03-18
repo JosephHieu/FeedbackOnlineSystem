@@ -16,7 +16,7 @@ import java.util.UUID;
 public class TemplateResponse {
 
     private UUID maTemplate;
-    private String temTemplate;
+    private String tenTemplate;
     private Boolean status;
     private LocalDateTime createAt;
     private List<CauHoiResponse> danhSachCauHoi;

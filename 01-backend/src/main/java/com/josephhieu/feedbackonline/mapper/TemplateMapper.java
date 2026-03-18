@@ -15,7 +15,7 @@ public interface TemplateMapper {
     CauHoi toCauHoiEntity(TemplateRequest.CauHoiRequest request);
 
     @Mapping(target = "createAt", source = "createdAt")
-    @Mapping(target = "temTemplate", source = "tenTemplate")
+    @Mapping(target = "tenTemplate", source = "tenTemplate")
     TemplateResponse toResponse(Template entity);
 
     TemplateResponse.CauHoiResponse toCauHoiResponse(CauHoi entity);

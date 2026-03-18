@@ -35,6 +35,8 @@ public class TemplateServiceImpl implements TemplateService {
 
         Template template = templateMapper.toEntity(request);
 
+        template.setStatus(true);
+
         if (template.getDanhSachCauHoi() != null) {
             template.getDanhSachCauHoi().forEach(ch -> ch.setTemplate(template));
         }
