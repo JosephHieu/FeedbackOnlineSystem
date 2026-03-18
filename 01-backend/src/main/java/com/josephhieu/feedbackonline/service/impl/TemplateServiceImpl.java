@@ -69,27 +69,42 @@ public class TemplateServiceImpl implements TemplateService {
         Template existingTemplate = templateRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
 
+        if (!existingTemplate.getTenTemplate().equalsIgnoreCase(request.getTenTemplate()) &&
+                templateRepository.existsByTenTemplate(request.getTenTemplate())) {
+            throw new AppException(ErrorCode.TEMPLATE_EXISTED);
+        }
+
         validateScores(request.getDanhSachCauHoi());
 
         existingTemplate.setTenTemplate(request.getTenTemplate());
 
         existingTemplate.getDanhSachCauHoi().clear();
 
-        List<CauHoi> newCauHois = request.getDanhSachCauHoi().stream()
-                .map(req -> {
-                    CauHoi ch = templateMapper.toCauHoiEntity(req);
-                    ch.setTemplate(existingTemplate);
-                    return ch;
-                }).toList();
-
-        existingTemplate.getDanhSachCauHoi().addAll(newCauHois);
+        // 2. Kiểm tra null-safe trước khi thêm câu hỏi mới
+        if (request.getDanhSachCauHoi() != null) {
+            List<CauHoi> newCauHois = request.getDanhSachCauHoi().stream()
+                    .map(req -> {
+                        CauHoi ch = templateMapper.toCauHoiEntity(req);
+                        ch.setTemplate(existingTemplate);
+                        return ch;
+                    }).toList();
+            existingTemplate.getDanhSachCauHoi().addAll(newCauHois);
+        }
         return templateMapper.toResponse(templateRepository.save(existingTemplate));
+    }
+
+    @Override
+    public TemplateResponse getTemplateById(UUID id) {
+        return templateRepository.findById(id)
+                .filter(Template::getStatus)
+                .map(templateMapper::toResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
     }
 
     private void validateScores(List<TemplateRequest.CauHoiRequest> danhSachCauHoi) {
         if (danhSachCauHoi != null) {
             for (var req : danhSachCauHoi) {
-                if (req.getDiemToiThieu() > req.getDiemToiDa()) {
+                if (req.getDiemToiThieu() < 0 || req.getDiemToiDa() <= 0 || req.getDiemToiThieu() >= req.getDiemToiDa()) {
                     throw new AppException(ErrorCode.INVALID_SCORE_RANGE);
                 }
             }

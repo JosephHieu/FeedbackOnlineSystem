@@ -1,28 +1,46 @@
 import api from "./api";
 
+/**
+ * Service quản lý các mẫu khảo sát (Feedback Templates)
+ */
 const templateService = {
-  // 1. Lấy danh sách tất cả template đang hoạt động
+  /**
+   * Lấy danh sách tất cả mẫu khảo sát (Đã qua xử lý status = true ở Backend)
+   * @returns {Promise<Array>} Danh sách TemplateResponse
+   */
   getAllTemplates: () => {
     return api.get("/templates");
   },
 
-  // 2. Tạo mới một template
+  /**
+   * Tạo mới một mẫu khảo sát
+   * @param {Object} data - Format: { tenTemplate: string, danhSachCauHoi: Array }
+   */
   createTemplate: (data) => {
-    // data: { tenTemplate: string, danhSachCauHoi: Array }
     return api.post("/templates", data);
   },
 
-  // 3. Cập nhật template theo ID
+  /**
+   * Cập nhật thông tin mẫu khảo sát theo UUID
+   * @param {string} id - UUID của template
+   * @param {Object} data - Dữ liệu cập nhật tương tự createTemplate
+   */
   updateTemplate: (id, data) => {
     return api.put(`/templates/${id}`, data);
   },
 
-  // 4. Xóa mềm template theo ID
+  /**
+   * Xóa mềm mẫu khảo sát (Đổi status thành false ở Backend)
+   * @param {string} id - UUID của template
+   */
   deleteTemplate: (id) => {
     return api.delete(`/templates/${id}`);
   },
 
-  // 5. Lấy chi tiết 1 template (nếu sau này bạn viết thêm API GetById)
+  /**
+   * Lấy chi tiết một mẫu khảo sát (Dùng để đổ dữ liệu vào Form Sửa)
+   * @param {string} id - UUID của template
+   */
   getTemplateById: (id) => {
     return api.get(`/templates/${id}`);
   },

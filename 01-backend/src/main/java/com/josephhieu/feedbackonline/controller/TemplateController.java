@@ -46,6 +46,21 @@ public class TemplateController {
         return ResponseEntity.ok(ApiResponse.success(results, "Lấy danh sách thành công", servletRequest.getRequestURI()));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<TemplateResponse>> getTemplateById(
+            @PathVariable UUID id,
+            HttpServletRequest servletRequest) {
+
+        log.info(">>> [GET] Truy vấn chi tiết Template ID: {}", id);
+        TemplateResponse result = templateService.getTemplateById(id);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                result,
+                "Lấy thông tin mẫu feedback thành công",
+                servletRequest.getRequestURI()
+        ));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteTemplate(
             @PathVariable UUID id,
