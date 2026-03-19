@@ -27,7 +27,7 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
           <i className="ri-computer-line text-purple-500 text-xl md:text-2xl font-bold"></i>
           {/* Ẩn chữ Online hoặc thu nhỏ chữ trên Mobile */}
           <h1 className="text-white text-lg md:text-xl font-bold tracking-tight">
-            FB
+            Feedback Online System
             <span className="hidden xs:inline">
               -<span className="text-purple-400">Online</span>
             </span>

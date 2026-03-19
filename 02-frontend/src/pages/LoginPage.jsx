@@ -51,14 +51,13 @@ const LoginPage = () => {
     <div className="min-h-screen bg-[#f0f2f5] flex items-center justify-center p-4">
       <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
         {/* Left Side: Branding & Slogan */}
-        <div className="text-center lg:text-left flex-1">
-          <h1 className="text-5xl lg:text-6xl font-bold text-blue-600 mb-4">
+        <div className="text-center lg:text-left flex-1 px-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-blue-600 mb-4 tracking-tight">
             Feedback Online
           </h1>
-          <p className="text-xl lg:text-2xl text-gray-700 font-medium leading-tight">
+          <p className="text-lg md:text-xl lg:text-2xl text-gray-600 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
             Lắng nghe ý kiến của bạn, nâng cao chất lượng đào tạo mỗi ngày.
           </p>
-          {/* Bạn có thể thêm một cái hình minh họa nhẹ nhàng ở đây nếu muốn giống ảnh mẫu */}
         </div>
 
         {/* Right Side: Login Form */}
