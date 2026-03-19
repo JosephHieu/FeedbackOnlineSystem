@@ -1,6 +1,7 @@
 package com.josephhieu.feedbackonline.controller;
 
 import com.josephhieu.feedbackonline.common.dto.response.ApiResponse;
+import com.josephhieu.feedbackonline.common.dto.response.PageResponse;
 import com.josephhieu.feedbackonline.dto.request.TemplateRequest;
 import com.josephhieu.feedbackonline.dto.response.TemplateResponse;
 import com.josephhieu.feedbackonline.service.TemplateService;
@@ -33,17 +34,26 @@ public class TemplateController {
         log.info("<<< [POST] Tạo Template thành công: ID={}", result.getMaTemplate());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(result, "Tạo mẫu feedback thành công", servletRequest.getRequestURI()));
+                .body(ApiResponse.success(
+                        result,
+                        "Tạo mẫu feedback thành công",
+                        servletRequest.getRequestURI()));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TemplateResponse>>> getAllTemplates(
+    public ResponseEntity<ApiResponse<PageResponse<TemplateResponse>>> getAllTemplates(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
             HttpServletRequest servletRequest) {
 
         log.info(">>> [GET] Truy vấn danh sách Template");
-        List<TemplateResponse> results = templateService.getAllActiveTemplates();
 
-        return ResponseEntity.ok(ApiResponse.success(results, "Lấy danh sách thành công", servletRequest.getRequestURI()));
+        PageResponse<TemplateResponse> results = templateService.getAllTemplatesPaging(page, size);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                results,
+                "Lấy danh sách thành công",
+                servletRequest.getRequestURI()));
     }
 
     @GetMapping("/{id}")
@@ -66,11 +76,13 @@ public class TemplateController {
             @PathVariable UUID id,
             HttpServletRequest servletRequest) {
 
-        log.warn(">>> [DELETE] Yêu cầu xóa Template ID: {}", id);
+        log.info(">>> [DELETE/PATCH] Thay đổi trạng thái Template ID: {}", id);
         templateService.deleteTemplate(id);
-        log.info("<<< [DELETE] Xóa Template thành công: ID={}", id);
 
-        return ResponseEntity.ok(ApiResponse.success("Xóa mẫu feedback thành công", null, servletRequest.getRequestURI()));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Thay đổi trạng thái mẫu feedback thành công",
+                null,
+                servletRequest.getRequestURI()));
     }
 
     @PutMapping("/{id}")
@@ -82,6 +94,9 @@ public class TemplateController {
         log.info(">>> [PUT] Cập nhật Template ID: {}", id);
         TemplateResponse result = templateService.updateTemplate(id, request);
 
-        return ResponseEntity.ok(ApiResponse.success(result, "Cập nhật mẫu feedback thành công", servletRequest.getRequestURI()));
+        return ResponseEntity.ok(ApiResponse.success(
+                result,
+                "Cập nhật mẫu feedback thành công",
+                servletRequest.getRequestURI()));
     }
 }

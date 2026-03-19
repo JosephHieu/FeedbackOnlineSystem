@@ -22,15 +22,9 @@ public class CauHoi extends BaseEntity {
     @Column(name = "\"TenCauHoi\"", nullable = false, columnDefinition = "TEXT")
     private String tenCauHoi;
 
-    @Column(name = "\"STT\"")
-    private Integer STT;
-
     @Column(name = "\"DiemToiThieu\"")
     private Integer diemToiThieu;
 
     @Column(name = "\"DiemToiDa\"")
     private Integer diemToiDa;
-
-    @Column(name = "\"DiemToiThieuKhongGhiChu\"")
-    private Integer diemToiThieuKhongGhiChu;
 }

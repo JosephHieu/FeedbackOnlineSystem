@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface CauHoiRepository extends JpaRepository<CauHoi, UUID> {
 
-    List<CauHoi> findByTemplateMaTemplateOrderBySTTAsc(UUID maTemplate);
+    List<CauHoi> findByTemplateMaTemplateOrderByCreatedAtAsc(UUID maTemplate);
 
     void deleteByTemplateMaTemplate(UUID maTemplate);
 }

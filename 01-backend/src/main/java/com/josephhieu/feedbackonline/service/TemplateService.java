@@ -1,5 +1,6 @@
 package com.josephhieu.feedbackonline.service;
 
+import com.josephhieu.feedbackonline.common.dto.response.PageResponse;
 import com.josephhieu.feedbackonline.dto.request.TemplateRequest;
 import com.josephhieu.feedbackonline.dto.response.TemplateResponse;
 
@@ -17,4 +18,6 @@ public interface TemplateService {
     TemplateResponse updateTemplate(UUID id, TemplateRequest request);
 
     TemplateResponse getTemplateById(UUID id);
+
+    PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size);
 }

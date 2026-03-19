@@ -65,6 +65,7 @@ function App() {
 
           <Route path="templates" element={<TemplateListPage />} />
           <Route path="templates/create" element={<TemplateFormPage />} />
+          <Route path="templates/edit/:id" element={<TemplateFormPage />} />
 
           <Route path="assign" element={<div>Trang gán Topic</div>} />
           <Route

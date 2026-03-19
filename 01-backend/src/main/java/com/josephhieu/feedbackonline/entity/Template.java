@@ -23,5 +23,6 @@ public class Template extends BaseEntity {
     private Boolean status = true;
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt ASC")
     private List<CauHoi> danhSachCauHoi;
 }

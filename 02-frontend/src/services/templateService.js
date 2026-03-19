@@ -5,11 +5,16 @@ import api from "./api";
  */
 const templateService = {
   /**
-   * Lấy danh sách tất cả mẫu khảo sát (Đã qua xử lý status = true ở Backend)
-   * @returns {Promise<Array>} Danh sách TemplateResponse
+   * Lấy danh sách mẫu khảo sát có phân trang
+   * @param {number} page - Trang hiện tại (mặc định 1)
+   * @param {number} size - Số bản ghi mỗi trang (mặc định 10)
+   * @returns {Promise<Object>} PageResponse chứa mảng templates và thông tin phân trang
    */
-  getAllTemplates: () => {
-    return api.get("/templates");
+  getAllTemplates: (page = 1, size = 5) => {
+    // Truyền tham số dưới dạng query string: ?page=x&size=y
+    return api.get("/templates", {
+      params: { page, size },
+    });
   },
 
   /**

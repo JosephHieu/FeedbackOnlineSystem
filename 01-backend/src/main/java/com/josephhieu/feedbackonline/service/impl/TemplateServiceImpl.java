@@ -1,5 +1,6 @@
 package com.josephhieu.feedbackonline.service.impl;
 
+import com.josephhieu.feedbackonline.common.dto.response.PageResponse;
 import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.TemplateRequest;
@@ -10,6 +11,10 @@ import com.josephhieu.feedbackonline.mapper.TemplateMapper;
 import com.josephhieu.feedbackonline.repository.TemplateRepository;
 import com.josephhieu.feedbackonline.service.TemplateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +65,7 @@ public class TemplateServiceImpl implements TemplateService {
         Template template = templateRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
 
-        template.setStatus(false);
+        template.setStatus(!template.getStatus());
         templateRepository.save(template);
     }
 
@@ -98,9 +103,28 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public TemplateResponse getTemplateById(UUID id) {
         return templateRepository.findById(id)
-                .filter(Template::getStatus)
                 .map(templateMapper::toResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
+    }
+
+    @Override
+    public PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+
+        Page<Template> templatePage = templateRepository.findAll(pageable);
+
+        List<TemplateResponse> dtoList = templatePage.getContent().stream()
+                .map(templateMapper::toResponse)
+                .toList();
+
+        return PageResponse.<TemplateResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .totalPages(templatePage.getTotalPages())
+                .totalElements(templatePage.getTotalElements())
+                .data(dtoList)
+                .build();
     }
 
     private void validateScores(List<TemplateRequest.CauHoiRequest> danhSachCauHoi) {
