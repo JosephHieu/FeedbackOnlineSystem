@@ -44,11 +44,11 @@ public class TemplateController {
     public ResponseEntity<ApiResponse<PageResponse<TemplateResponse>>> getAllTemplates(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "search", required = false) String search,
             HttpServletRequest servletRequest) {
 
         log.info(">>> [GET] Truy vấn danh sách Template");
-
-        PageResponse<TemplateResponse> results = templateService.getAllTemplatesPaging(page, size);
+        PageResponse<TemplateResponse> results = templateService.getAllTemplatesPaging(page, size, search);
 
         return ResponseEntity.ok(ApiResponse.success(
                 results,

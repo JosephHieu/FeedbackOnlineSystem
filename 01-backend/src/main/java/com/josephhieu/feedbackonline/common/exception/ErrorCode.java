@@ -27,6 +27,7 @@ public enum ErrorCode {
     TEMPLATE_EXISTED(2002, "Tên mẫu feedback đã tồn tại", HttpStatus.BAD_REQUEST),
     TEMPLATE_IN_USE(2003, "Mẫu feedback đang được sử dụng bởi một lớp học, không thể xóa", HttpStatus.CONFLICT),
     INVALID_SCORE_RANGE(2004, "Điểm tối thiểu không được lớn hơn điểm tối đa", HttpStatus.BAD_REQUEST),
+    INVALID_SCORE_NEGATIVE(2005, "Điểm số không được là số âm nhé!", HttpStatus.BAD_REQUEST),
 
     // CLASS (LOP) ERRORS
     CLASS_NOT_EXISTED(3001, "Lớp học không tồn tại", HttpStatus.NOT_FOUND),

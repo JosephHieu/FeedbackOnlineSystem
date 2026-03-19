@@ -19,5 +19,5 @@ public interface TemplateService {
 
     TemplateResponse getTemplateById(UUID id);
 
-    PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size);
+    PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size, String keyword);
 }

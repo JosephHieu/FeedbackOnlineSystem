@@ -1,6 +1,8 @@
 package com.josephhieu.feedbackonline.repository;
 
 import com.josephhieu.feedbackonline.entity.Template;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,6 @@ public interface TemplateRepository extends JpaRepository<Template, UUID> {
     List<Template> findAllByStatusTrue();
 
     boolean existsByTenTemplate(String tenTemplate);
+
+    Page<Template> findByTenTemplateContainingIgnoreCase(String keyword, Pageable pageable);
 }

@@ -108,11 +108,16 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size) {
-
+    public PageResponse<TemplateResponse> getAllTemplatesPaging(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
 
-        Page<Template> templatePage = templateRepository.findAll(pageable);
+        Page<Template> templatePage;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            templatePage = templateRepository.findByTenTemplateContainingIgnoreCase(keyword, pageable);
+        } else {
+            templatePage = templateRepository.findAll(pageable);
+        }
 
         List<TemplateResponse> dtoList = templatePage.getContent().stream()
                 .map(templateMapper::toResponse)
@@ -130,7 +135,13 @@ public class TemplateServiceImpl implements TemplateService {
     private void validateScores(List<TemplateRequest.CauHoiRequest> danhSachCauHoi) {
         if (danhSachCauHoi != null) {
             for (var req : danhSachCauHoi) {
-                if (req.getDiemToiThieu() < 0 || req.getDiemToiDa() <= 0 || req.getDiemToiThieu() >= req.getDiemToiDa()) {
+                // 1. Kiểm tra số âm trước (Ưu tiên cao nhất)
+                if (req.getDiemToiThieu() < 0 || req.getDiemToiDa() < 0) {
+                    throw new AppException(ErrorCode.INVALID_SCORE_NEGATIVE);
+                }
+
+                // 2. Kiểm tra logic Min >= Max
+                if (req.getDiemToiThieu() >= req.getDiemToiDa()) {
                     throw new AppException(ErrorCode.INVALID_SCORE_RANGE);
                 }
             }

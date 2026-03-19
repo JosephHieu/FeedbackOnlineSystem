@@ -10,10 +10,10 @@ const templateService = {
    * @param {number} size - Số bản ghi mỗi trang (mặc định 10)
    * @returns {Promise<Object>} PageResponse chứa mảng templates và thông tin phân trang
    */
-  getAllTemplates: (page = 1, size = 5) => {
+  getAllTemplates: (page = 1, size = 5, search = "") => {
     // Truyền tham số dưới dạng query string: ?page=x&size=y
     return api.get("/templates", {
-      params: { page, size },
+      params: { page, size, search },
     });
   },
 
