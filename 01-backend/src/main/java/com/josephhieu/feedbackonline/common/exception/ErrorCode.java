@@ -28,14 +28,20 @@ public enum ErrorCode {
     TEMPLATE_IN_USE(2003, "Mẫu feedback đang được sử dụng bởi một lớp học, không thể xóa", HttpStatus.CONFLICT),
     INVALID_SCORE_RANGE(2004, "Điểm tối thiểu không được lớn hơn điểm tối đa", HttpStatus.BAD_REQUEST),
     INVALID_SCORE_NEGATIVE(2005, "Điểm số không được là số âm nhé!", HttpStatus.BAD_REQUEST),
+    TEMPLATE_IS_DISABLED(2006, "Mẫu khảo sát này đang bị khóa, không thể gán cho lớp", HttpStatus.BAD_REQUEST),
+    TEMPLATE_HAS_NO_QUESTIONS(2007, "Mẫu này chưa có câu hỏi nào, không gán được đâu nhé", HttpStatus.BAD_REQUEST),
 
     // CLASS (LOP) ERRORS
     CLASS_NOT_EXISTED(3001, "Lớp học không tồn tại", HttpStatus.NOT_FOUND),
     CLASS_EXISTED(3002, "Tên lớp học đã tồn tại", HttpStatus.BAD_REQUEST),
+    CLASS_HAS_STUDENTS(3003, "Lớp học đang có học viên, không thể xóa cưng ơi", HttpStatus.CONFLICT),
+    CLASS_ALREADY_ASSIGNED(3004, "Lớp học này đã được gán mẫu khảo sát này rồi", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Request
     METHOD_NOT_SUPPORTED(4005, "Phương thức HTTP không được hỗ trợ", HttpStatus.METHOD_NOT_ALLOWED),
     INVALID_JSON(4006, "Dữ liệu gửi lên không đúng định dạng", HttpStatus.BAD_REQUEST),
+    FIELD_REQUIRED(4007, "Trường dữ liệu này là bắt buộc", HttpStatus.BAD_REQUEST),
+    INVALID_UUID_FORMAT(4008, "Định dạng mã định danh (UUID) không hợp lệ", HttpStatus.BAD_REQUEST),
 
     ;
     ErrorCode(int code, String message, HttpStatus statusCode) {
