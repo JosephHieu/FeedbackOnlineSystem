@@ -43,7 +43,20 @@ public enum ErrorCode {
     FIELD_REQUIRED(4007, "Trường dữ liệu này là bắt buộc", HttpStatus.BAD_REQUEST),
     INVALID_UUID_FORMAT(4008, "Định dạng mã định danh (UUID) không hợp lệ", HttpStatus.BAD_REQUEST),
 
+    // STUDENT (HOCVIEN) ERRORS
+    STUDENT_NOT_EXISTED(5001, "Học viên không tồn tại", HttpStatus.NOT_FOUND),
+    STUDENT_ALREADY_IN_CLASS(5002, "Học viên này đã ở trong lớp rồi", HttpStatus.BAD_REQUEST),
+    USERNAME_EXISTED(5003, "Tên tài khoản học viên đã tồn tại", HttpStatus.BAD_REQUEST),
+
+    // IMPORT & FILE ERRORS
+    IMPORT_ERROR(6001, "Lỗi trong quá trình xử lý file Excel", HttpStatus.BAD_REQUEST),
+    INVALID_FILE_FORMAT(6002, "Định dạng file không hỗ trợ (Chỉ nhận .xlsx)", HttpStatus.BAD_REQUEST),
+    FILE_TOO_LARGE(6003, "File quá lớn, vui lòng chia nhỏ dữ liệu", HttpStatus.PAYLOAD_TOO_LARGE),
+    EMPTY_FILE(6004, "File không có dữ liệu để xử lý", HttpStatus.BAD_REQUEST),
+
+
     ;
+
     ErrorCode(int code, String message, HttpStatus statusCode) {
         this.code = code;
         this.message = message;

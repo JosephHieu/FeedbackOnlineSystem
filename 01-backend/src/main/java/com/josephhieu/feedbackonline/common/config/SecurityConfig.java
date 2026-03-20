@@ -51,6 +51,10 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/templates/**").hasRole("ADMIN")
 
+                        .requestMatchers("/api/v1/lops/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/hoc-viens/**").hasRole("ADMIN")
+
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 

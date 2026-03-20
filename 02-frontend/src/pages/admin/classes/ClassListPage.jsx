@@ -75,7 +75,7 @@ const ClassListPage = () => {
           showConfirmButton: false,
         });
       } catch (err) {
-        Swal.fire("Lỗi!", "Hệ thống đang bận.", "error");
+        Swal.fire("Lỗi!" + err.message, "Hệ thống đang bận.", "error");
       }
     }
   };
