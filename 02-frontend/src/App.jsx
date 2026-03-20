@@ -12,6 +12,8 @@ import AdminLayout from "./components/layout/AdminLayout";
 import UserLayout from "./components/layout/UserLayout";
 import TemplateListPage from "./pages/admin/templates/TemplateListPage";
 import TemplateFormPage from "./pages/admin/templates/TemplateFormPage";
+import ClassListPage from "./pages/admin/classes/ClassListPage";
+import ClassFormPage from "./pages/admin/classes/ClassFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -58,7 +60,9 @@ function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="classes" element={<div>Quản lý lớp học</div>} />
+          <Route path="classes" element={<ClassListPage />} />
+          <Route path="classes/create" element={<ClassFormPage />} />
+          <Route path="classes/edit/:id" element={<ClassFormPage />} />
           <Route path="students" element={<div>Quản lý học viên</div>} />
           <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
           <Route path="topics" element={<div>Quản lý chủ đề</div>} />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import templateService from "../../../services/templateService";
+import { templateService } from "../../../services/templateService";
 import Swal from "sweetalert2";
 import debounce from "lodash.debounce"; // Cưng nhớ: npm install lodash.debounce
 

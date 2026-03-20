@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // Thêm useParams
-import templateService from "../../../services/templateService";
+import { templateService } from "../../../services/templateService";
 import toast from "react-hot-toast";
 
 const TemplateFormPage = () => {

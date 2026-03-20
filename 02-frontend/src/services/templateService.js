@@ -3,7 +3,7 @@ import api from "./api";
 /**
  * Service quản lý các mẫu khảo sát (Feedback Templates)
  */
-const templateService = {
+export const templateService = {
   /**
    * Lấy danh sách mẫu khảo sát có phân trang
    * @param {number} page - Trang hiện tại (mặc định 1)
@@ -50,5 +50,3 @@ const templateService = {
     return api.get(`/templates/${id}`);
   },
 };
-
-export default templateService;
