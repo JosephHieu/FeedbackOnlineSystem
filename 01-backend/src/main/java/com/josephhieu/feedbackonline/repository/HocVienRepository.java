@@ -19,5 +19,9 @@ public interface HocVienRepository extends JpaRepository<HocVien, UUID> {
 
     Page<HocVien> findByLop_MaLop(UUID maLop, Pageable pageable);
 
+    Page<HocVien> findByLop_MaLopAndStatusTrue(UUID maLop, Pageable pageable);
+
+    Page<HocVien> findByLop_MaLopAndTenHocVienContainingIgnoreCaseAndStatusTrue(UUID maLop, String ten, Pageable pageable);
+
     long countByLop_MaLop(UUID maLop);
 }

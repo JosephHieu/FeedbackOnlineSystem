@@ -16,7 +16,7 @@ public interface HocVienService {
 
     HocVienResponse getHocVienById(UUID maHocVien);
 
-    void toggleStatus(UUID maHocVien);
+    void deleteHocVien(UUID maHocVien);
 
     void importFromExcel(MultipartFile file, UUID maLop);
 }

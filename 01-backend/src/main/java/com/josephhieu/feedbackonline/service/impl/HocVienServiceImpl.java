@@ -12,6 +12,7 @@ import com.josephhieu.feedbackonline.repository.HocVienRepository;
 import com.josephhieu.feedbackonline.repository.LopRepository;
 import com.josephhieu.feedbackonline.service.HocVienService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HocVienServiceImpl implements HocVienService {
 
     private final HocVienRepository hocVienRepository;
@@ -105,12 +107,14 @@ public class HocVienServiceImpl implements HocVienService {
 
     @Override
     @Transactional
-    public void toggleStatus(UUID maHocVien) {
+    public void deleteHocVien(UUID maHocVien) {
         HocVien hocVien = hocVienRepository.findById(maHocVien)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
 
-        hocVien.setStatus(!hocVien.getStatus());
+        hocVien.setStatus(false);
+
         hocVienRepository.save(hocVien);
+        log.info("Học viên {} đã được xóa mềm thành công", maHocVien);
     }
 
     @Override

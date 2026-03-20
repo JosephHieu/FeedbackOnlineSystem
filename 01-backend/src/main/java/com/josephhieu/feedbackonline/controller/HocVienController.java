@@ -73,12 +73,12 @@ public class HocVienController {
      * Đổi trạng thái (Vô hiệu hóa/Kích hoạt) học viên
      */
     @DeleteMapping("/{maHocVien}")
-    public ApiResponse<Void> toggleStatus(
+    public ApiResponse<Void> deleteHocVien(
             @PathVariable UUID maHocVien,
             HttpServletRequest servletRequest) {
 
         log.warn("Admin đang thay đổi trạng thái học viên ID: {}", maHocVien);
-        hocVienService.toggleStatus(maHocVien);
+        hocVienService.deleteHocVien(maHocVien);
         return ApiResponse.success(null, "Cập nhật trạng thái thành công", servletRequest.getRequestURI());
     }
 
