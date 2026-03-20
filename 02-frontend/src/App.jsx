@@ -14,6 +14,8 @@ import TemplateListPage from "./pages/admin/templates/TemplateListPage";
 import TemplateFormPage from "./pages/admin/templates/TemplateFormPage";
 import ClassListPage from "./pages/admin/classes/ClassListPage";
 import ClassFormPage from "./pages/admin/classes/ClassFormPage";
+import StudentListPage from "./pages/admin/students/StudentListPage";
+import StudentFormPage from "./pages/admin/students/StudentFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -60,17 +62,23 @@ function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
+          {/* Quản lý Lớp học */}
           <Route path="classes" element={<ClassListPage />} />
           <Route path="classes/create" element={<ClassFormPage />} />
           <Route path="classes/edit/:id" element={<ClassFormPage />} />
-          <Route path="students" element={<div>Quản lý học viên</div>} />
+          {/* Quản lý Học viên */}
+          <Route path="students" element={<StudentListPage />} />
+          <Route path="students/create" element={<StudentFormPage />} />
+          <Route path="students/edit/:id" element={<StudentFormPage />} />
+          {/* Quản lý Giáo viên */}
           <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
+          {/* Quản lý Chủ đề */}
           <Route path="topics" element={<div>Quản lý chủ đề</div>} />
-
+          {/* Quản lý Mẫu khảo sát */}
           <Route path="templates" element={<TemplateListPage />} />
           <Route path="templates/create" element={<TemplateFormPage />} />
           <Route path="templates/edit/:id" element={<TemplateFormPage />} />
-
+          {/* Quản lý Gán Topic */}
           <Route path="assign" element={<div>Trang gán Topic</div>} />
           <Route
             path="pending"
@@ -78,7 +86,6 @@ function App() {
           />
           <Route path="export" element={<div>Trang xuất kết quả</div>} />
           <Route path="clear" element={<div>Trang xóa dữ liệu</div>} />
-
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

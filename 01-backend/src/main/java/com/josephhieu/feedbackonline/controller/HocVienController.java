@@ -42,6 +42,19 @@ public class HocVienController {
     }
 
     /**
+     * Lấy chi tiết một học viên theo ID (Dùng cho trang Edit)
+     */
+    @GetMapping("/{maHocVien}")
+    public ApiResponse<HocVienResponse> getHocVienById(
+            @PathVariable UUID maHocVien,
+            HttpServletRequest servletRequest) {
+
+        log.info("Admin đang lấy chi tiết học viên ID: {}", maHocVien);
+        var result = hocVienService.getHocVienById(maHocVien);
+        return ApiResponse.success(result, "Lấy thông tin học viên thành công", servletRequest.getRequestURI());
+    }
+
+    /**
      * Tạo mới một học viên (Thủ công)
      */
     @PostMapping

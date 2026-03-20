@@ -111,10 +111,17 @@ public class HocVienServiceImpl implements HocVienService {
         HocVien hocVien = hocVienRepository.findById(maHocVien)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
 
-        hocVien.setStatus(false);
+        // Kiểm tra nếu status bị null thì mặc định là false (hoặc true tùy cưng)
+        // Sau đó mới thực hiện đảo ngược
+        Boolean currentStatus = hocVien.getStatus();
+        if (currentStatus == null) {
+            currentStatus = false;
+        }
+
+        hocVien.setStatus(!currentStatus);
 
         hocVienRepository.save(hocVien);
-        log.info("Học viên {} đã được xóa mềm thành công", maHocVien);
+        log.info("Học viên {} đã thay đổi trạng thái thành công", maHocVien);
     }
 
     @Override
@@ -146,8 +153,8 @@ public class HocVienServiceImpl implements HocVienService {
 
                 if (cellUsername == null || cellFullName == null) continue;
 
-                String username = cellUsername.getStringCellValue().trim();
-                String fullName = cellFullName.getStringCellValue().trim();
+                String username = getCellValueAsString(cellUsername);
+                String fullName = getCellValueAsString(cellFullName);
 
                 // Nếu username chưa tồn tại thì mới thêm vào danh sách lưu
                 if (!username.isEmpty() && !hocVienRepository.existsByUsername(username)) {
@@ -167,6 +174,23 @@ public class HocVienServiceImpl implements HocVienService {
 
         } catch (IOException e) {
             throw new AppException(ErrorCode.IMPORT_ERROR);
+        }
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) return "";
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                // Xử lý trường hợp số (ví dụ: 2024 -> "2024")
+                return String.valueOf((long) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
         }
     }
 }

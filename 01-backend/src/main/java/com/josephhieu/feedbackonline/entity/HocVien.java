@@ -28,6 +28,6 @@ public class HocVien extends BaseEntity {
     @JoinColumn(name = "\"MaLop\"")
     private Lop lop;
 
-    @Column(name = "\"Status\"")
+    @Column(name = "\"Status\"", nullable = false)
     private Boolean status = true;
 }

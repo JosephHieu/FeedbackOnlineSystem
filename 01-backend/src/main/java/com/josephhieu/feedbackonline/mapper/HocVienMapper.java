@@ -23,5 +23,6 @@ public interface HocVienMapper {
     @Mapping(target = "maHocVien", ignore = true)
     @Mapping(target = "lop", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "status", ignore = true)
     void updateEntity(@MappingTarget HocVien hocVien, HocVienRequest request);
 }
