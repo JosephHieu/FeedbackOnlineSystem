@@ -15,6 +15,9 @@ public class Trainer extends BaseEntity {
     @Column(name = "\"MaTrainer\"", updatable = false, nullable = false)
     private UUID maTrainer;
 
+    @Column(name = "\"Account\"", nullable = false, unique = true)
+    private String account;
+
     @Column(name = "\"TenTrainer\"", nullable = false)
     private String tenTrainer;
 

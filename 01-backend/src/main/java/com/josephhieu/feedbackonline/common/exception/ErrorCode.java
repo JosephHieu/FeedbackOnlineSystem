@@ -54,6 +54,12 @@ public enum ErrorCode {
     FILE_TOO_LARGE(6003, "File quá lớn, vui lòng chia nhỏ dữ liệu", HttpStatus.PAYLOAD_TOO_LARGE),
     EMPTY_FILE(6004, "File không có dữ liệu để xử lý", HttpStatus.BAD_REQUEST),
 
+    // TRAINER ERRORS
+    TRAINER_NOT_EXISTED(7001, "Giảng viên không tồn tại cưng ơi", HttpStatus.NOT_FOUND),
+    TRAINER_ACCOUNT_EXISTED(7002, "Account giảng viên này đã có người dùng rồi", HttpStatus.BAD_REQUEST),
+    TRAINER_NAME_INVALID(7003, "Tên giảng viên không được chứa con số nhé", HttpStatus.BAD_REQUEST),
+    TRAINER_HAS_ASSIGNMENTS(7004, "Giảng viên này đang dạy, không xóa được đâu", HttpStatus.CONFLICT),
+
 
     ;
 
