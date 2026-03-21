@@ -16,6 +16,8 @@ import ClassListPage from "./pages/admin/classes/ClassListPage";
 import ClassFormPage from "./pages/admin/classes/ClassFormPage";
 import StudentListPage from "./pages/admin/students/StudentListPage";
 import StudentFormPage from "./pages/admin/students/StudentFormPage";
+import TrainerListPage from "./pages/admin/trainers/TrainerListPage";
+import TrainerFormPage from "./pages/admin/trainers/TrainerFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -71,7 +73,9 @@ function App() {
           <Route path="students/create" element={<StudentFormPage />} />
           <Route path="students/edit/:id" element={<StudentFormPage />} />
           {/* Quản lý Giáo viên */}
-          <Route path="trainers" element={<div>Quản lý giảng viên</div>} />
+          <Route path="trainers" element={<TrainerListPage />} />
+          <Route path="trainers/create" element={<TrainerFormPage />} />
+          <Route path="trainers/edit/:id" element={<TrainerFormPage />} />{" "}
           {/* Quản lý Chủ đề */}
           <Route path="topics" element={<div>Quản lý chủ đề</div>} />
           {/* Quản lý Mẫu khảo sát */}
