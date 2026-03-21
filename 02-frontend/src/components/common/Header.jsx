@@ -1,9 +1,31 @@
 import React from "react";
 import { useAuth } from "../../hooks/useAuth";
+import Swal from "sweetalert2";
+import ChangePasswordModal from "./ChangePasswordModel";
 
 // Thêm prop showToggle để điều khiển việc hiển thị nút đóng/mở sidebar
 const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
   const { user, logout } = useAuth();
+
+  const [isCPModalOpen, setIsCPModalOpen] = React.useState(false);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Đăng xuất?",
+      text: "Cưng có chắc chắn muốn rời khỏi hệ thống không?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48", // Màu rose-600 đồng bộ với nút đăng xuất
+      cancelButtonColor: "#475569", // Màu slate-600
+      confirmButtonText: "Đồng ý, đăng xuất!",
+      cancelButtonText: "Ở lại",
+      reverseButtons: true, // Đưa nút Hủy sang trái, Đồng ý sang phải cho thuận tay
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout(); // Gọi hàm logout từ useAuth
+      }
+    });
+  };
 
   return (
     <header className="bg-[#2c2e33] h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-50 shadow-md">
@@ -45,7 +67,10 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
         </div>
 
         {/* Đổi mật khẩu: Ẩn chữ trên mobile, chỉ hiện icon */}
-        <button className="bg-[#3e4148] hover:bg-[#4a4d55] border border-gray-600 px-2 md:px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all">
+        <button
+          onClick={() => setIsCPModalOpen(true)}
+          className="bg-[#3e4148] hover:bg-[#4a4d55] border border-gray-600 px-2 md:px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all"
+        >
           <i className="ri-wrench-line text-sm text-gray-400"></i>
           <span className="hidden sm:inline text-sm font-medium">
             Đổi mật khẩu
@@ -54,7 +79,7 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
 
         {/* Đăng xuất: Ẩn chữ trên mobile, chỉ hiện icon và đổi màu hover nhanh */}
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="bg-[#3e4148] hover:bg-rose-600 border border-gray-600 px-2 md:px-4 py-1.5 rounded text-white flex items-center gap-2 transition-all group"
         >
           <i className="ri-logout-box-r-line text-sm text-gray-400 group-hover:text-white"></i>
@@ -63,6 +88,10 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
           </span>
         </button>
       </div>
+      <ChangePasswordModal
+        isOpen={isCPModalOpen}
+        onClose={() => setIsCPModalOpen(false)}
+      />
     </header>
   );
 };

@@ -46,4 +46,13 @@ export const authService = {
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
   },
+
+  /**
+   * Đổi mật khẩu cho người dùng hiện tại
+   * @param {Object} data - { oldPassword, newPassword, confirmPassword }
+   */
+  changePassword: async (passwordData) => {
+    // Gọi API POST /auth/change-password (hoặc /change-password tùy controller cưng đặt)
+    return await api.post("/auth/change-password", passwordData);
+  },
 };
