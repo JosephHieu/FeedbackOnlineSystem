@@ -7,44 +7,45 @@ import {
   FaFileUpload,
   FaSearch,
   FaUserEdit,
-  FaUserSlash, // Đổi icon xóa thành UserSlash cho đúng nghiệp vụ vô hiệu hóa
+  FaUserSlash,
   FaGraduationCap,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import StudentImportModal from "./StudentImportModal";
 
 const StudentListPage = () => {
-  // --- LOGIC GHI NHỚ TRẠNG THÁI ---
-  const [selectedLop, setSelectedLop] = useState(() => {
-    return sessionStorage.getItem("lastSelectedLop") || "";
-  });
-  const [searchTerm, setSearchTerm] = useState(() => {
-    return sessionStorage.getItem("lastSearchTerm") || "";
-  });
+  const [selectedLop, setSelectedLop] = useState(
+    () => sessionStorage.getItem("lastSelectedLop") || "",
+  );
+  const [searchTerm, setSearchTerm] = useState(
+    () => sessionStorage.getItem("lastSearchTerm") || "",
+  );
 
+  // --- THÊM STATE PHÂN TRANG ---
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(10); // Mỗi trang hiện 10 người
+
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // 1. Lấy danh sách lớp
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         const res = await classService.getAllLops(1, 100);
         const classList = res.data || [];
         setClasses(classList);
-
-        // Nếu chưa có lớp nào được chọn trong session, thì chọn lớp đầu tiên
         if (
           classList.length > 0 &&
           !sessionStorage.getItem("lastSelectedLop")
         ) {
-          const firstLopId = classList[0].maLop;
-          setSelectedLop(firstLopId);
-          sessionStorage.setItem("lastSelectedLop", firstLopId);
+          setSelectedLop(classList[0].maLop);
         }
       } catch (err) {
         toast.error("Không thể tải danh sách lớp");
@@ -53,33 +54,25 @@ const StudentListPage = () => {
     fetchClasses();
   }, []);
 
-  // Lưu lựa chọn vào session khi thay đổi
-  useEffect(() => {
-    if (selectedLop) sessionStorage.setItem("lastSelectedLop", selectedLop);
-  }, [selectedLop]);
-
-  useEffect(() => {
-    sessionStorage.setItem("lastSearchTerm", searchTerm);
-  }, [searchTerm]);
-
-  // 2. Hàm lấy danh sách học viên
   const fetchStudents = useCallback(async () => {
     if (!selectedLop) return;
     setLoading(true);
     try {
+      // Gửi currentPage và pageSize xuống API
       const res = await studentService.getStudentsByLop(
         selectedLop,
-        1,
-        100,
+        currentPage,
+        pageSize,
         searchTerm,
       );
       setStudents(res.data || []);
+      setTotalPages(res.totalPages || 0); // Lưu tổng số trang để render nút
     } catch (err) {
       setStudents([]);
     } finally {
       setLoading(false);
     }
-  }, [selectedLop, searchTerm]);
+  }, [selectedLop, searchTerm, currentPage, pageSize]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -88,7 +81,12 @@ const StudentListPage = () => {
     return () => clearTimeout(delayDebounce);
   }, [fetchStudents]);
 
-  // 3. Xử lý vô hiệu hóa học viên
+  // Reset về trang 1 khi đổi lớp hoặc search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedLop, searchTerm]);
+
+  // Logic xóa... (giữ nguyên)
   const handleDelete = async (student) => {
     const result = await Swal.fire({
       title: "Vô hiệu hóa?",
@@ -98,10 +96,6 @@ const StudentListPage = () => {
       confirmButtonColor: "#ef4444",
       confirmButtonText: "Đồng ý",
       cancelButtonText: "Hủy",
-      customClass: {
-        confirmButton: "rounded-xl px-6 py-2.5 font-bold",
-        cancelButton: "rounded-xl px-6 py-2.5 font-bold",
-      },
     });
 
     if (result.isConfirmed) {
@@ -109,15 +103,13 @@ const StudentListPage = () => {
         await studentService.toggleStatus(student.maHocVien);
         toast.success("Đã thay đổi trạng thái học viên");
         fetchStudents();
-      } catch (err) {
-        // Interceptor đã handle
-      }
+      } catch (err) {}
     }
   };
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-white">
-      {/* Header Section */}
+      {/* Header & Filter (Giữ nguyên của cưng) */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         <div>
           <p className="text-slate-500 text-sm font-medium">
@@ -140,7 +132,6 @@ const StudentListPage = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
       <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6 flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <label className="block text-[10px] font-black text-slate-400 uppercase mb-1.5 ml-1">
@@ -177,7 +168,7 @@ const StudentListPage = () => {
       </div>
 
       {/* Table Section */}
-      <div className="flex-1 border border-slate-100 rounded-2xl overflow-hidden flex flex-col min-h-0">
+      <div className="flex-1 border border-slate-100 rounded-2xl overflow-hidden flex flex-col min-h-0 bg-white">
         <div className="overflow-auto flex-1 hide-scrollbar">
           <table className="w-full text-left border-collapse relative">
             <thead className="sticky top-0 z-10 bg-slate-50 shadow-sm">
@@ -258,6 +249,48 @@ const StudentListPage = () => {
             </tbody>
           </table>
         </div>
+
+        {/* --- UI PHÂN TRANG (PAGINATION) --- */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <p className="text-xs text-slate-500 font-medium">
+              Trang{" "}
+              <span className="text-indigo-600 font-bold">{currentPage}</span>{" "}
+              trên <span className="font-bold">{totalPages}</span>
+            </p>
+            <div className="flex gap-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                <FaChevronLeft size={12} />
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+                    currentPage === i + 1
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-100"
+                      : "bg-white border border-slate-200 text-slate-600 hover:border-indigo-300"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                <FaChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <StudentImportModal

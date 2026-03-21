@@ -76,9 +76,9 @@ const AdminLayout = () => {
         <AdminSidebar isOpen={isSidebarOpen} />
 
         {/* Nội dung chính bên phải */}
-        <main className="flex-1 p-2 md:p-4 lg:p-6 transition-all duration-300 overflow-hidden flex flex-col w-full">
+        <main className="flex-1 p-2 md:p-3 lg:p-4 transition-all duration-300 overflow-hidden flex flex-col w-full">
           {/* Container trắng bo góc chứa toàn bộ nội dung */}
-          <div className="flex-1 w-full max-w-7xl mx-auto bg-white rounded-2xl lg:rounded-[2.5rem] shadow-sm border border-gray-100 p-4 lg:p-10 flex flex-col overflow-hidden">
+          <div className="flex-1 w-full max-w-full mx-auto bg-white rounded-2xl lg:rounded-[1.5rem] shadow-sm border border-gray-100 p-4 lg:p-6 flex flex-col overflow-hidden">
             {/* Header của trang con: Gồm nút Back và Tiêu đề nằm sát nhau */}
             <div className="flex items-center gap-2 mb-6 md:mb-8">
               {!isDashboard && (
