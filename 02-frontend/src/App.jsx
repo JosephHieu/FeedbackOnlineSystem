@@ -18,6 +18,8 @@ import StudentListPage from "./pages/admin/students/StudentListPage";
 import StudentFormPage from "./pages/admin/students/StudentFormPage";
 import TrainerListPage from "./pages/admin/trainers/TrainerListPage";
 import TrainerFormPage from "./pages/admin/trainers/TrainerFormPage";
+import TopicListPage from "./pages/admin/topics/TopicListPage";
+import TopicFormPage from "./pages/admin/topics/TopicFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -77,7 +79,9 @@ function App() {
           <Route path="trainers/create" element={<TrainerFormPage />} />
           <Route path="trainers/edit/:id" element={<TrainerFormPage />} />{" "}
           {/* Quản lý Chủ đề */}
-          <Route path="topics" element={<div>Quản lý chủ đề</div>} />
+          <Route path="topics" element={<TopicListPage />} />
+          <Route path="topics/create" element={<TopicFormPage />} />
+          <Route path="topics/edit/:id" element={<TopicFormPage />} />{" "}
           {/* Quản lý Mẫu khảo sát */}
           <Route path="templates" element={<TemplateListPage />} />
           <Route path="templates/create" element={<TemplateFormPage />} />
