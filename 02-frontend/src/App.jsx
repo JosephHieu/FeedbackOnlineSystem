@@ -20,6 +20,8 @@ import TrainerListPage from "./pages/admin/trainers/TrainerListPage";
 import TrainerFormPage from "./pages/admin/trainers/TrainerFormPage";
 import TopicListPage from "./pages/admin/topics/TopicListPage";
 import TopicFormPage from "./pages/admin/topics/TopicFormPage";
+import GanTopicListPage from "./pages/admin/assign/GanTopicListPage";
+import GanTopicFormPage from "./pages/admin/assign/GanTopicFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -87,12 +89,16 @@ function App() {
           <Route path="templates/create" element={<TemplateFormPage />} />
           <Route path="templates/edit/:id" element={<TemplateFormPage />} />
           {/* Quản lý Gán Topic */}
-          <Route path="assign" element={<div>Trang gán Topic</div>} />
+          <Route path="assign" element={<GanTopicListPage />} />
+          <Route path="assign/create" element={<GanTopicFormPage />} />{" "}
+          {/* Học viên chưa Feedback */}
           <Route
             path="pending"
             element={<div>Trang học viên chưa Feedback</div>}
           />
+          {/* Xuất kết quả */}
           <Route path="export" element={<div>Trang xuất kết quả</div>} />
+          {/* Xóa toàn bộ dữ liệu */}
           <Route path="clear" element={<div>Trang xóa dữ liệu</div>} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

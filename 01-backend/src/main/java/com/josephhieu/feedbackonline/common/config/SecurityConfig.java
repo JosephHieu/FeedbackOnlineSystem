@@ -55,6 +55,12 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/hoc-viens/**").hasRole("ADMIN")
 
+                        .requestMatchers("/api/v1/trainers/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/topics/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/assign-topics/**").hasRole("ADMIN")
+
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
