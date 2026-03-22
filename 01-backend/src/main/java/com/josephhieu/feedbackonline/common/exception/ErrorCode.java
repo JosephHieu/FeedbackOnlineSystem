@@ -63,6 +63,10 @@ public enum ErrorCode {
     TRAINER_NAME_INVALID(7003, "Tên giảng viên không được chứa con số nhé", HttpStatus.BAD_REQUEST),
     TRAINER_HAS_ASSIGNMENTS(7004, "Giảng viên này đang dạy, không xóa được đâu", HttpStatus.CONFLICT),
 
+    // TOPIC ERRORS
+    TOPIC_NOT_EXISTED(8001, "Chủ đề feedback không tồn tại cưng ơi", HttpStatus.NOT_FOUND),
+    TOPIC_EXISTED(8002, "Tên chủ đề này đã tồn tại rồi nhé", HttpStatus.BAD_REQUEST),
+    TOPIC_IN_USE(8003, "Chủ đề này đã có dữ liệu feedback, không thể xóa cứng", HttpStatus.CONFLICT),
 
     ;
 
