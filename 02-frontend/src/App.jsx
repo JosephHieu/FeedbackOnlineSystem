@@ -22,6 +22,7 @@ import TopicListPage from "./pages/admin/topics/TopicListPage";
 import TopicFormPage from "./pages/admin/topics/TopicFormPage";
 import GanTopicListPage from "./pages/admin/assign/GanTopicListPage";
 import GanTopicFormPage from "./pages/admin/assign/GanTopicFormPage";
+import PendingFeedbackPage from "./pages/admin/feedback/PendingFeedbackPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -52,7 +53,19 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 function App() {
   return (
     <Router>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "12px",
+            background: "#333",
+            color: "#fff",
+            fontWeight: "bold",
+          },
+        }}
+      />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -92,10 +105,7 @@ function App() {
           <Route path="assign" element={<GanTopicListPage />} />
           <Route path="assign/create" element={<GanTopicFormPage />} />{" "}
           {/* Học viên chưa Feedback */}
-          <Route
-            path="pending"
-            element={<div>Trang học viên chưa Feedback</div>}
-          />
+          <Route path="pending" element={<PendingFeedbackPage />} />
           {/* Xuất kết quả */}
           <Route path="export" element={<div>Trang xuất kết quả</div>} />
           {/* Xóa toàn bộ dữ liệu */}

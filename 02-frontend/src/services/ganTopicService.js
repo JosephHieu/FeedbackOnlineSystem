@@ -10,6 +10,13 @@ export const ganTopicService = {
     return await api.get(`/assign-topics/class/${maLop}`);
   },
 
+  getTopicsByClassId: async (maLop) => {
+    // API này sẽ trả về danh sách các Topic đã được gán cho Lớp maLop
+    // Đường dẫn này phải khớp với Controller bên Java của cưng nhé
+    const response = await api.get(`/assign-topics/class/${maLop}`);
+    return response;
+  },
+
   /**
    * 2. Thực hiện gán hàng loạt Topic cho Lớp và Trainer
    * @param {Object} data - { maLop, maTrainer, danhSachMaTopic: [uuid1, uuid2...] }
