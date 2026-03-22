@@ -68,6 +68,12 @@ public enum ErrorCode {
     TOPIC_EXISTED(8002, "Tên chủ đề này đã tồn tại rồi nhé", HttpStatus.BAD_REQUEST),
     TOPIC_IN_USE(8003, "Chủ đề này đã có dữ liệu feedback, không thể xóa cứng", HttpStatus.CONFLICT),
 
+    // ASSIGN ERRORS (GÁN TOPIC)
+    ASSIGN_NOT_EXISTED(9001, "Bản ghi gán topic không tồn tại", HttpStatus.NOT_FOUND),
+    ASSIGN_ALREADY_EXISTED(9002, "Chủ đề này đã được gán cho lớp rồi cưng ơi", HttpStatus.BAD_REQUEST),
+    ASSIGN_EMPTY_TOPIC_LIST(9003, "Vui lòng chọn ít nhất một chủ đề để gán nhé", HttpStatus.BAD_REQUEST),
+    ASSIGN_TRAINER_NOT_MATCH(9004, "Giảng viên này không khớp với cấu hình hiện tại của lớp", HttpStatus.BAD_REQUEST),
+
     ;
 
     ErrorCode(int code, String message, HttpStatus statusCode) {
