@@ -61,7 +61,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/assign-topics/**").hasRole("ADMIN")
 
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/feedbacks/submit").hasRole("USER")
+                        .requestMatchers("/api/v1/feedbacks/pending").hasRole("ADMIN")
+
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

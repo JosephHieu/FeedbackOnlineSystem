@@ -74,6 +74,11 @@ public enum ErrorCode {
     ASSIGN_EMPTY_TOPIC_LIST(9003, "Vui lòng chọn ít nhất một chủ đề để gán nhé", HttpStatus.BAD_REQUEST),
     ASSIGN_TRAINER_NOT_MATCH(9004, "Giảng viên này không khớp với cấu hình hiện tại của lớp", HttpStatus.BAD_REQUEST),
 
+    // --- FEEDBACK ERRORS ---
+    FEEDBACK_ALREADY_SUBMITTED(10001, "Cưng đã thực hiện đánh giá cho chủ đề này rồi, không được tham lam nha!", HttpStatus.BAD_REQUEST),
+    INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 cưng nhé!", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp, đừng 'hack' cưng ơi!", HttpStatus.BAD_REQUEST)
+
     ;
 
     ErrorCode(int code, String message, HttpStatus statusCode) {
