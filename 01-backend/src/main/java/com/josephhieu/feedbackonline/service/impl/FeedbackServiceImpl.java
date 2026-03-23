@@ -10,6 +10,7 @@ import com.josephhieu.feedbackonline.entity.id.ChiTietFeedbackId;
 import com.josephhieu.feedbackonline.repository.*;
 import com.josephhieu.feedbackonline.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FeedbackServiceImpl implements FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
@@ -112,10 +114,16 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         Lop lop = hv.getLop();
 
-        // 2. Lấy Template ID từ Lớp (Cái "chìa khóa" nằm ở đây nè cưng)
+        if (lop == null) {
+            log.warn("Học viên {} chưa được gán vào lớp nào!", username);
+            return List.of();
+        }
+
         if (lop.getTemplate() == null) {
             throw new AppException(ErrorCode.CLASS_HAS_NO_TEMPLATE);
         }
+
+
         UUID maTemplate = lop.getTemplate().getMaTemplate();
 
         // 3. Lấy các Topic được gán cho Lớp này

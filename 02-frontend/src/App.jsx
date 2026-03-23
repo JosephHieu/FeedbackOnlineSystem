@@ -23,6 +23,8 @@ import TopicFormPage from "./pages/admin/topics/TopicFormPage";
 import GanTopicListPage from "./pages/admin/assign/GanTopicListPage";
 import GanTopicFormPage from "./pages/admin/assign/GanTopicFormPage";
 import PendingFeedbackPage from "./pages/admin/feedback/PendingFeedbackPage";
+import UserHomePage from "./pages/user/UserHomePage";
+import FeedbackFormPage from "./pages/user/FeedbackFormPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -122,14 +124,9 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route
-            path="home"
-            element={
-              <div className="text-xl font-semibold">
-                Chọn topic cần feedback
-              </div>
-            }
-          />
+          {/* Bỏ dấu / và chữ user ở đầu đi cưng nhé */}
+          <Route path="home" element={<UserHomePage />} />
+          <Route path="feedback/:maTopic" element={<FeedbackFormPage />} />
           <Route index element={<Navigate to="home" replace />} />
         </Route>
 
