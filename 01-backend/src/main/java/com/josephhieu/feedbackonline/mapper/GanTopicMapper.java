@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface GanTopicMapper {
 
+    @Mapping(source = "topic.maTopic", target = "maTopic")
     @Mapping(source = "lop.tenLop", target = "tenLop")
     @Mapping(source = "trainer.tenTrainer", target = "tenTrainer")
     @Mapping(source = "topic.tenTopic", target = "tenTopic")

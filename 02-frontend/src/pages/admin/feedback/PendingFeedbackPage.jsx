@@ -1,37 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { classService } from "../../../services/classService";
 import { feedbackService } from "../../../services/feedbackService";
-import { ganTopicService } from "../../../services/ganTopicService"; // Service quản lý việc gán topic
-import { FaUserClock, FaSearch, FaExclamationCircle } from "react-icons/fa";
+import { ganTopicService } from "../../../services/ganTopicService";
+import {
+  FaUserClock,
+  FaSearch,
+  FaExclamationCircle,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const PendingFeedbackPage = () => {
   const [lops, setLops] = useState([]);
-  const [assignedTopics, setAssignedTopics] = useState([]); // Chỉ chứa topic đã gán cho lớp
+  const [assignedTopics, setAssignedTopics] = useState([]);
   const [selectedLop, setSelectedLop] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("");
   const [pendingList, setPendingList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 1. Load danh sách lớp khi vào trang
+  // --- LOGIC PHÂN TRANG ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Cưng muốn quá 5 thì chia trang nè
+
+  // Tính toán dữ liệu hiển thị cho trang hiện tại
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = pendingList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(pendingList.length / itemsPerPage);
+
   useEffect(() => {
     classService.getAllLops(1, 100).then((res) => {
       setLops(res.data || []);
     });
   }, []);
 
-  // 2. Mỗi khi chọn Lớp khác, phải đi lấy lại danh sách Topic đã gán cho lớp đó
   useEffect(() => {
     if (selectedLop) {
-      setAssignedTopics([]); // Reset danh sách topic cũ
-      setSelectedTopic(""); // Reset topic đang chọn
+      setAssignedTopics([]);
+      setSelectedTopic("");
+      setPendingList([]); // Reset danh sách khi đổi lớp
+      setCurrentPage(1); // Reset về trang 1
 
-      // Gọi API lấy topic theo lớp (Cưng check lại hàm này trong ganTopicService nhé)
       ganTopicService
         .getTopicsByClassId(selectedLop)
-        .then((res) => {
-          setAssignedTopics(res || []);
-        })
+        .then((res) => setAssignedTopics(res || []))
         .catch(() =>
           toast.error("Không lấy được danh sách chủ đề của lớp này"),
         );
@@ -41,6 +54,7 @@ const PendingFeedbackPage = () => {
   const handleFetchPending = async () => {
     if (!selectedLop || !selectedTopic) return;
     setLoading(true);
+    setCurrentPage(1); // Luôn về trang 1 khi bấm tìm mới
     try {
       const data = await feedbackService.getPendingFeedbackList(
         selectedLop,
@@ -58,6 +72,7 @@ const PendingFeedbackPage = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+        {/* Header giữ nguyên */}
         <div className="flex items-center gap-4 mb-8">
           <div className="p-3 bg-amber-500 rounded-2xl text-white shadow-lg shadow-amber-100">
             <FaUserClock size={24} />
@@ -97,14 +112,15 @@ const PendingFeedbackPage = () => {
               Bước 2: Chọn Chủ đề đã gán
             </label>
             <select
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl font-bold outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl font-bold outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all"
               value={selectedTopic}
               onChange={(e) => setSelectedTopic(e.target.value)}
               disabled={!selectedLop || assignedTopics.length === 0}
             >
-              <option value="">-- Chọn chủ đề --</option>
+              <option value="">
+                {selectedLop ? "-- Chọn chủ đề --" : "Hãy chọn lớp trước..."}
+              </option>
               {assignedTopics.map((item) => (
-                // SỬA Ở ĐÂY: value phải là ID (maTopic), còn hiển thị mới là Tên
                 <option key={item.maTopic} value={item.maTopic}>
                   {item.tenTopic}
                 </option>
@@ -121,7 +137,7 @@ const PendingFeedbackPage = () => {
           </button>
         </div>
 
-        {/* BẢNG DANH SÁCH HỌC VIÊN "NỢ" BÀI */}
+        {/* BẢNG DANH SÁCH HỌC VIÊN */}
         <div className="mt-8 border border-slate-100 rounded-3xl overflow-hidden shadow-inner bg-white">
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-100">
@@ -138,14 +154,14 @@ const PendingFeedbackPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {pendingList.length > 0 ? (
-                pendingList.map((item, idx) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((item, idx) => (
                   <tr
                     key={item.maHocVien}
                     className="hover:bg-amber-50/30 transition-all group"
                   >
                     <td className="px-6 py-4 font-bold text-slate-400 text-center">
-                      {idx + 1}
+                      {indexOfFirstItem + idx + 1}
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-black text-slate-700 group-hover:text-amber-600 transition-colors">
@@ -177,6 +193,54 @@ const PendingFeedbackPage = () => {
             </tbody>
           </table>
         </div>
+
+        {/* --- UI PHÂN TRANG --- */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <p className="text-sm font-bold text-slate-500">
+              Hiển thị{" "}
+              <span className="text-slate-800">{indexOfFirstItem + 1}</span> -{" "}
+              <span className="text-slate-800">
+                {Math.min(indexOfLastItem, pendingList.length)}
+              </span>{" "}
+              trên <span className="text-slate-800">{pendingList.length}</span>{" "}
+              học viên
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                <FaChevronLeft className="text-slate-600" />
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-10 h-10 rounded-lg font-black text-sm transition-all ${
+                    currentPage === i + 1
+                      ? "bg-slate-900 text-white shadow-lg"
+                      : "bg-white text-slate-600 border border-slate-200 hover:border-slate-400"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                <FaChevronRight className="text-slate-600" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

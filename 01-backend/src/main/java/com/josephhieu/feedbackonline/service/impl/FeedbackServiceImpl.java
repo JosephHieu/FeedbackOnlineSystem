@@ -26,6 +26,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final TopicRepository topicRepository;
     private final TrainerRepository trainerRepository;
     private final TemplateRepository templateRepository;
+    private final CauHoiRepository cauHoiRepository;
 
     @Override
     @Transactional
@@ -66,7 +67,8 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .map(item -> ChiTietFeedback.builder()
                         .id(new ChiTietFeedbackId(savedFeedback.getMaFeedback(), item.getMaCauHoi()))
                         .feedback(savedFeedback)
-                        .cauHoi(CauHoi.builder().maCauHoi(item.getMaCauHoi()).build())
+                        .cauHoi(cauHoiRepository.findById(item.getMaCauHoi())
+                                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_EXIST)))
                         .diem(item.getDiem())
                         .ghiChu(item.getGhiChu())
                         .build())
@@ -77,6 +79,11 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<PendingFeedbackResponse> getPendingFeedbackList(UUID maLop, UUID maTopic) {
+
+        if (maTopic == null || maLop == null) {
+            return List.of();
+        }
+
         // 1. Lấy thông tin Topic để gán tên vào Response
         Topic topic = topicRepository.findById(maTopic)
                 .orElseThrow(() -> new AppException(ErrorCode.TOPIC_NOT_EXISTED));

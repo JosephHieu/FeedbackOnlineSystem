@@ -73,7 +73,11 @@ public class GanTopicServiceImpl implements GanTopicService {
     @Override
     public List<GanTopicResponse> getAssignmentsByClass(UUID maLop) {
         return ganTopicRepository.findAllByLop_MaLop(maLop).stream()
-                .map(ganTopicMapper::toResponse)
+                .map(entity -> {
+                    GanTopicResponse response = ganTopicMapper.toResponse(entity);
+                    response.setMaTopic(entity.getTopic().getMaTopic());
+                    return response;
+                })
                 .toList();
     }
 

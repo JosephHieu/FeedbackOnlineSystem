@@ -16,7 +16,8 @@ public interface FeedbackRepository extends JpaRepository<Feedback, UUID> {
     // Tìm tất cả học viên của lớp 'maLop' mà CHƯA có bản ghi Feedback cho 'maTopic'
     @Query("SELECT hv FROM HocVien hv " +
             "WHERE hv.lop.maLop = :maLop " +
-            "AND hv.status = true " +
+            "AND hv.status = true " + // Chỉ tính học viên đang hoạt động
+            "AND EXISTS (SELECT gt FROM GanTopic gt WHERE gt.lop.maLop = :maLop AND gt.topic.maTopic = :maTopic) " +
             "AND hv.maHocVien NOT IN (" +
             "   SELECT f.hocVien.maHocVien FROM Feedback f " +
             "   WHERE f.lop.maLop = :maLop AND f.topic.maTopic = :maTopic" +

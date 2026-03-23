@@ -77,7 +77,8 @@ public enum ErrorCode {
     // --- FEEDBACK ERRORS ---
     FEEDBACK_ALREADY_SUBMITTED(10001, "Cưng đã thực hiện đánh giá cho chủ đề này rồi, không được tham lam nha!", HttpStatus.BAD_REQUEST),
     INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 cưng nhé!", HttpStatus.BAD_REQUEST),
-    QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp, đừng 'hack' cưng ơi!", HttpStatus.BAD_REQUEST)
+    QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp, đừng 'hack' cưng ơi!", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.BAD_REQUEST),
 
     ;
 
