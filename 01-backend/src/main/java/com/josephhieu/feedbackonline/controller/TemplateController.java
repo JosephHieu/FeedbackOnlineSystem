@@ -21,12 +21,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/templates")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class TemplateController {
 
     private final TemplateService templateService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TemplateResponse>> createTemplate(
             @RequestBody @Valid TemplateRequest request,
             HttpServletRequest servletRequest) {
@@ -43,6 +43,7 @@ public class TemplateController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PageResponse<TemplateResponse>>> getAllTemplates(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -59,6 +60,7 @@ public class TemplateController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<ApiResponse<TemplateResponse>> getTemplateById(
             @PathVariable UUID id,
             HttpServletRequest servletRequest) {
@@ -74,6 +76,7 @@ public class TemplateController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> deleteTemplate(
             @PathVariable UUID id,
             HttpServletRequest servletRequest) {
@@ -88,6 +91,7 @@ public class TemplateController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TemplateResponse>> updateTemplate(
             @PathVariable UUID id,
             @RequestBody @Valid TemplateRequest request,

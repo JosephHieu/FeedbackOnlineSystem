@@ -49,20 +49,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        .requestMatchers("/api/v1/templates/**").hasRole("ADMIN")
-
+                        .requestMatchers("/api/v1/templates/**").authenticated()
                         .requestMatchers("/api/v1/lops/**").hasRole("ADMIN")
-
                         .requestMatchers("/api/v1/hoc-viens/**").hasRole("ADMIN")
-
                         .requestMatchers("/api/v1/trainers/**").hasRole("ADMIN")
-
-                        .requestMatchers("/api/v1/topics/**").hasRole("ADMIN")
-
+                        .requestMatchers("/api/v1/topics/**").authenticated()
                         .requestMatchers("/api/v1/assign-topics/**").hasRole("ADMIN")
-
-                        .requestMatchers("/api/v1/feedbacks/submit").hasRole("USER")
                         .requestMatchers("/api/v1/feedbacks/pending").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/feedbacks/submit").hasRole("USER")
+                        .requestMatchers("/api/v1/user/**").hasRole("USER")
+
 
                         .anyRequest().authenticated())
 

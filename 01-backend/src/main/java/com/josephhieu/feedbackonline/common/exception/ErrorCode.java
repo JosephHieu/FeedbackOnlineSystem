@@ -39,6 +39,7 @@ public enum ErrorCode {
     CLASS_EXISTED(3002, "Tên lớp học đã tồn tại", HttpStatus.BAD_REQUEST),
     CLASS_HAS_STUDENTS(3003, "Lớp học đang có học viên, không thể xóa cưng ơi", HttpStatus.CONFLICT),
     CLASS_ALREADY_ASSIGNED(3004, "Lớp học này đã được gán mẫu khảo sát này rồi", HttpStatus.BAD_REQUEST),
+    CLASS_HAS_NO_TEMPLATE(3005, "Lớp học không có template nào", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Request
     METHOD_NOT_SUPPORTED(4005, "Phương thức HTTP không được hỗ trợ", HttpStatus.METHOD_NOT_ALLOWED),
@@ -78,7 +79,7 @@ public enum ErrorCode {
     FEEDBACK_ALREADY_SUBMITTED(10001, "Cưng đã thực hiện đánh giá cho chủ đề này rồi, không được tham lam nha!", HttpStatus.BAD_REQUEST),
     INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 cưng nhé!", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp, đừng 'hack' cưng ơi!", HttpStatus.BAD_REQUEST),
-    QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.NOT_FOUND),
 
     ;
 

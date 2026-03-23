@@ -4,6 +4,7 @@ import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.FeedbackRequest;
 import com.josephhieu.feedbackonline.dto.response.PendingFeedbackResponse;
+import com.josephhieu.feedbackonline.dto.response.UserTopicResponse;
 import com.josephhieu.feedbackonline.entity.*;
 import com.josephhieu.feedbackonline.entity.id.ChiTietFeedbackId;
 import com.josephhieu.feedbackonline.repository.*;
@@ -27,6 +28,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final TrainerRepository trainerRepository;
     private final TemplateRepository templateRepository;
     private final CauHoiRepository cauHoiRepository;
+    private final GanTopicRepository ganTopicRepository;
 
     @Override
     @Transactional
@@ -101,4 +103,40 @@ public class FeedbackServiceImpl implements FeedbackService {
                         .build())
                 .toList();
     }
+
+    @Override
+    public List<UserTopicResponse> getTopicsForStudent(String username) {
+        // 1. Tìm học viên
+        HocVien hv = hocVienRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
+
+        Lop lop = hv.getLop();
+
+        // 2. Lấy Template ID từ Lớp (Cái "chìa khóa" nằm ở đây nè cưng)
+        if (lop.getTemplate() == null) {
+            throw new AppException(ErrorCode.CLASS_HAS_NO_TEMPLATE);
+        }
+        UUID maTemplate = lop.getTemplate().getMaTemplate();
+
+        // 3. Lấy các Topic được gán cho Lớp này
+        List<GanTopic> assignments = ganTopicRepository.findAllByLop_MaLop(lop.getMaLop());
+
+        return assignments.stream().map(gt -> {
+            // Kiểm tra xem HV đã làm Topic này chưa
+            boolean isDone = feedbackRepository.existsByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
+                    hv.getMaHocVien(), gt.getTopic().getMaTopic(), lop.getMaLop());
+
+            return UserTopicResponse.builder()
+                    .maTopic(gt.getTopic().getMaTopic())
+                    .tenTopic(gt.getTopic().getTenTopic())
+                    .tenTrainer(gt.getTrainer().getTenTrainer())
+                    .maLop(lop.getMaLop())
+                    .maTrainer(gt.getTrainer().getMaTrainer())
+                    .maTemplate(maTemplate)
+                    .isCompleted(isDone)
+                    .build();
+        }).toList();
+    }
+
+
 }
