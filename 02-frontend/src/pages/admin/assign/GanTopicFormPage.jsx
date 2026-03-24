@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { classService } from "../../../services/classService";
 import { trainerService } from "../../../services/trainerService";
 import { topicService } from "../../../services/topicService";
@@ -9,17 +9,23 @@ import toast from "react-hot-toast";
 
 const GanTopicFormPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams(); // Quản lý URL Params
+
+  // Lấy mã lớp từ URL nếu có (ví dụ: ?maLop=abcd)
+  const maLopFromUrl = searchParams.get("maLop") || "";
+
   const [lops, setLops] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [topics, setTopics] = useState([]);
 
   const [formData, setFormData] = useState({
-    maLop: "",
+    maLop: maLopFromUrl, // Khởi tạo bằng giá trị từ URL
     maTrainer: "",
     danhSachMaTopic: [],
   });
   const [loading, setLoading] = useState(false);
 
+  // 1. Load toàn bộ danh sách Dropdown
   useEffect(() => {
     setLoading(true);
     Promise.all([
@@ -28,16 +34,10 @@ const GanTopicFormPage = () => {
       topicService.getAllTopics(1, 100),
     ])
       .then(([resLop, resTrainer, resTopic]) => {
-        // Log ra để cưng nhìn tận mắt cấu hình dữ liệu trong Console
-        console.log("Dữ liệu Lớp:", resLop);
-        console.log("Dữ liệu Trainer:", resTrainer);
-        console.log("Dữ liệu Topic:", resTopic);
-
-        // Cách lấy data an toàn: Thử lấy .data, nếu không có thì coi chính nó là array, nếu ko phải array thì rỗng
         const getArray = (res) => {
           if (!res) return [];
-          if (Array.isArray(res)) return res; // Trường hợp trả về mảng trực tiếp
-          if (res.data && Array.isArray(res.data)) return res.data; // Trường hợp bọc trong .data (PageResponse)
+          if (Array.isArray(res)) return res;
+          if (res.data && Array.isArray(res.data)) return res.data;
           return [];
         };
 
@@ -45,11 +45,21 @@ const GanTopicFormPage = () => {
         setTrainers(getArray(resTrainer));
         setTopics(getArray(resTopic));
       })
-      .catch((err) => {
-        console.error("Lỗi load dữ liệu gán topic:", err);
-      })
+      .catch((err) => console.error("Lỗi load dữ liệu:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  // 2. ĐỒNG BỘ: Cập nhật URL khi Admin thay đổi Lớp trong Form
+  const handleLopChange = (e) => {
+    const maLop = e.target.value;
+    setFormData({ ...formData, maLop: maLop });
+
+    if (maLop) {
+      setSearchParams({ maLop });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const handleCheckboxChange = (topicId) => {
     setFormData((prev) => {
@@ -71,7 +81,8 @@ const GanTopicFormPage = () => {
     try {
       await ganTopicService.assignTopics(formData);
       toast.success("Gán chủ đề thành công!");
-      navigate("/admin/assign"); // Quay lại trang quản lý gán
+
+      navigate(`/admin/assign?maLop=${formData.maLop}`);
     } catch (err) {
       console.error(err.message);
     } finally {
@@ -96,7 +107,13 @@ const GanTopicFormPage = () => {
           </div>
           <button
             type="button"
-            onClick={() => navigate("/admin/assign")}
+            onClick={() =>
+              navigate(
+                formData.maLop
+                  ? `/admin/assign?maLop=${formData.maLop}`
+                  : "/admin/assign",
+              )
+            }
             className="p-2 hover:bg-white/20 rounded-xl transition-all"
           >
             <FaArrowLeft size={20} />
@@ -104,7 +121,6 @@ const GanTopicFormPage = () => {
         </div>
 
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Cột trái: Chọn Lớp & Trainer */}
           <div className="space-y-6">
             <div className="space-y-2">
               <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
@@ -114,9 +130,7 @@ const GanTopicFormPage = () => {
                 required
                 className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-emerald-50"
                 value={formData.maLop}
-                onChange={(e) =>
-                  setFormData({ ...formData, maLop: e.target.value })
-                }
+                onChange={handleLopChange} // Dùng hàm mới để đồng bộ URL
               >
                 <option value="">-- Chọn lớp --</option>
                 {lops.map((l) => (
@@ -149,7 +163,6 @@ const GanTopicFormPage = () => {
             </div>
           </div>
 
-          {/* Cột phải: Danh sách Topic với Checkbox */}
           <div className="space-y-2">
             <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
               Danh sách Topic (Chọn nhiều)

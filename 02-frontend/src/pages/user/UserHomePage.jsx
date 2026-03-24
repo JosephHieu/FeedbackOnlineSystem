@@ -37,8 +37,8 @@ const UserHomePage = () => {
               Chọn Topic cần Feedback
             </h1>
             <p className="text-slate-400 font-bold text-sm mt-1">
-              Bạn có {topics.filter((t) => !t.isCompleted).length} chủ đề cần
-              hoàn thành
+              Bạn có {topics.filter((t) => !t.completed).length} chủ đề cần hoàn
+              thành
             </p>
           </div>
         </div>
@@ -49,20 +49,19 @@ const UserHomePage = () => {
             <div
               key={topic.maTopic}
               onClick={() =>
-                !topic.isCompleted &&
                 navigate(`/user/feedback/${topic.maTopic}`, {
                   state: { topic },
                 })
               }
               className={`relative overflow-hidden p-6 rounded-[2rem] border-2 transition-all duration-300 ${
-                topic.isCompleted
+                topic.completed
                   ? "bg-slate-100/50 border-slate-100 opacity-80 cursor-default"
                   : "bg-white border-white shadow-sm hover:shadow-xl hover:border-indigo-500 cursor-pointer active:scale-[0.98]"
               }`}
             >
               <div className="flex items-center gap-5">
                 <div
-                  className={`p-4 rounded-2xl ${topic.isCompleted ? "bg-slate-200 text-slate-400" : "bg-indigo-50 text-indigo-600"}`}
+                  className={`p-4 rounded-2xl ${topic.completed ? "bg-slate-200 text-slate-400" : "bg-indigo-50 text-indigo-600"}`}
                 >
                   <FaBookOpen size={24} />
                 </div>
@@ -74,7 +73,7 @@ const UserHomePage = () => {
                     Trainer: {topic.tenTrainer}
                   </p>
                 </div>
-                {!topic.isCompleted ? (
+                {!topic.completed ? (
                   <FaChevronRight className="text-indigo-200 group-hover:text-indigo-500" />
                 ) : (
                   <FaCheckCircle className="text-emerald-500" size={20} />
@@ -83,7 +82,7 @@ const UserHomePage = () => {
 
               {/* Tag trạng thái */}
               <div className="mt-4 flex gap-2">
-                {topic.isCompleted ? (
+                {topic.completed ? (
                   <span className="px-3 py-1 bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase rounded-full">
                     Hoàn thành
                   </span>

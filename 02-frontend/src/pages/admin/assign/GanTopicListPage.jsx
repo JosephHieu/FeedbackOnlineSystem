@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { classService } from "../../../services/classService";
 import { ganTopicService } from "../../../services/ganTopicService";
 import { FaPlus, FaTrash, FaLink } from "react-icons/fa";
@@ -8,8 +8,13 @@ import toast from "react-hot-toast";
 
 const GanTopicListPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams(); // Quản lý URL Params
+
+  // Lấy mã lớp từ URL nếu có (ví dụ: ?maLop=abcd-1234)
+  const maLopFromUrl = searchParams.get("maLop") || "";
+
   const [lops, setLops] = useState([]);
-  const [selectedLop, setSelectedLop] = useState("");
+  const [selectedLop, setSelectedLop] = useState(maLopFromUrl); // Khởi tạo state bằng URL
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -18,26 +23,22 @@ const GanTopicListPage = () => {
     classService
       .getAllLops(1, 100)
       .then((res) => {
-        // res là cục result từ api.js, mảng nằm ở res.data
         if (res && res.data) {
           setLops(res.data);
-        } else {
-          setLops([]);
         }
       })
       .catch((err) => {
         console.error("Lỗi lấy danh sách lớp:", err);
-        setLops([]);
       });
   }, []);
 
-  // 2. Hàm lấy danh sách Topic đã gán (đưa ra ngoài để tái sử dụng)
+  // 2. Hàm lấy danh sách Topic đã gán
   const fetchAssignments = useCallback(async (maLop) => {
     if (!maLop) return;
     setLoading(true);
     try {
       const data = await ganTopicService.getAssignmentsByClass(maLop);
-      // Giả sử API này trả về mảng trực tiếp, nếu trả về PageResponse thì dùng data.data
+      // Xử lý dữ liệu trả về từ api.js (thường bóc trực tiếp result)
       setAssignments(Array.isArray(data) ? data : data.data || []);
     } catch (err) {
       console.error("Lỗi lấy danh sách gán:", err);
@@ -47,14 +48,28 @@ const GanTopicListPage = () => {
     }
   }, []);
 
-  // 3. Tự động load bảng khi người dùng chọn Lớp ở Dropdown
+  // 3. ĐỒNG BỘ: Tự động load dữ liệu khi mã lớp trên URL thay đổi
   useEffect(() => {
-    if (selectedLop) {
-      fetchAssignments(selectedLop);
+    if (maLopFromUrl) {
+      setSelectedLop(maLopFromUrl);
+      fetchAssignments(maLopFromUrl);
     } else {
+      setSelectedLop("");
       setAssignments([]);
     }
-  }, [selectedLop, fetchAssignments]);
+  }, [maLopFromUrl, fetchAssignments]);
+
+  // 4. Khi người dùng thay đổi Lớp ở Dropdown
+  const handleLopChange = (e) => {
+    const maLop = e.target.value;
+    // Thay vì set state trực tiếp, ta set lên URL.
+    // useEffect ở trên sẽ tự bắt lấy thay đổi này để load data.
+    if (maLop) {
+      setSearchParams({ maLop });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const handleClearAll = async () => {
     if (!selectedLop) return;
@@ -116,7 +131,7 @@ const GanTopicListPage = () => {
           <select
             className="w-full sm:w-64 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 outline-none focus:ring-2 focus:ring-rose-500 transition-all cursor-pointer"
             value={selectedLop}
-            onChange={(e) => setSelectedLop(e.target.value)}
+            onChange={handleLopChange} // Dùng hàm mới để cập nhật URL
           >
             <option value="">-- Chọn lớp học --</option>
             {lops.map((l) => (

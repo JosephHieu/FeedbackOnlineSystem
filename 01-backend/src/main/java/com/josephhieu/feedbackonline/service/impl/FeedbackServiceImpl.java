@@ -3,6 +3,7 @@ package com.josephhieu.feedbackonline.service.impl;
 import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.FeedbackRequest;
+import com.josephhieu.feedbackonline.dto.response.FeedbackResponse;
 import com.josephhieu.feedbackonline.dto.response.PendingFeedbackResponse;
 import com.josephhieu.feedbackonline.dto.response.UserTopicResponse;
 import com.josephhieu.feedbackonline.entity.*;
@@ -11,11 +12,13 @@ import com.josephhieu.feedbackonline.repository.*;
 import com.josephhieu.feedbackonline.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,24 +40,33 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional
     public void submitFeedback(FeedbackRequest request) {
         // 1. LẤY USERNAME TỪ SECURITY CONTEXT
-        String currentUsername = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication().getName();
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. TÌM HỌC VIÊN DỰA TRÊN USERNAME
+        // 2. TÌM HỌC VIÊN
         HocVien hv = hocVienRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
 
-        // 3. KIỂM TRA XEM ĐÃ NỘP CHƯA
-        if (feedbackRepository.existsByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
-                hv.getMaHocVien(), request.getMaTopic(), request.getMaLop())) {
-            throw new AppException(ErrorCode.FEEDBACK_ALREADY_SUBMITTED);
+        // 3. XỬ LÝ GHI ĐÈ (RE-FEEDBACK)
+        // Tìm xem đã có feedback cũ chưa
+        Optional<Feedback> oldFeedback = feedbackRepository.findByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
+                hv.getMaHocVien(), request.getMaTopic(), request.getMaLop());
+
+        if (oldFeedback.isPresent()) {
+            log.info(">>> Học viên {} thực hiện đánh giá lại cho Topic {}", currentUsername, request.getMaTopic());
+
+            // Xóa chi tiết cũ trước
+            chiTietFeedbackRepository.deleteAllByFeedback_MaFeedback(oldFeedback.get().getMaFeedback());
+            // Xóa feedback cũ
+            feedbackRepository.delete(oldFeedback.get());
+
+            // ÉP HIBERNATE XÓA NGAY LẬP TỨC để tránh lỗi exists ở bước sau (nếu có dùng)
+            feedbackRepository.flush();
         }
+
+        // --- BỎ BƯỚC 3 (CHECK EXISTS) CŨ CỦA CƯNG ĐI ---
+        // Vì mình đã cho phép đánh giá lại, nên không cần throw lỗi "ALREADY_SUBMITTED" nữa.
 
         // 4. TÌM CÁC THỰC THỂ KHÁC
-        if (request.getMaLop() == null || request.getMaTopic() == null) {
-            throw new AppException(ErrorCode.INVALID_KEY);
-        }
-
         Lop lop = lopRepository.findById(request.getMaLop())
                 .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_EXISTED));
 
@@ -67,9 +79,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         Template template = templateRepository.findById(request.getMaTemplate())
                 .orElseThrow(() -> new AppException(ErrorCode.TEMPLATE_NOT_EXISTED));
 
-        // 5. TẠO VÀ LƯU BẢNG CHÍNH (Feedback)
+        // 5. LƯU MỚI
         Feedback feedback = Feedback.builder()
-                .hocVien(hv) // Dùng hv vừa tìm được từ Token
+                .hocVien(hv)
                 .lop(lop)
                 .topic(topic)
                 .trainer(trainer)
@@ -78,7 +90,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         Feedback savedFeedback = feedbackRepository.save(feedback);
 
-        // 6. LƯU CHI TIẾT ĐIỂM
+        // 6. LƯU CHI TIẾT
         List<ChiTietFeedback> chiTietEntities = request.getChiTietFeedback().stream()
                 .map(item -> ChiTietFeedback.builder()
                         .id(new ChiTietFeedbackId(savedFeedback.getMaFeedback(), item.getMaCauHoi()))
@@ -91,7 +103,6 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .toList();
 
         chiTietFeedbackRepository.saveAll(chiTietEntities);
-        log.info(">>> Học viên {} đã nộp feedback thành công cho Topic {}", currentUsername, topic.getTenTopic());
     }
 
     @Override
@@ -144,8 +155,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         return assignments.stream().map(gt -> {
             // Kiểm tra xem HV đã làm Topic này chưa
-            boolean isDone = feedbackRepository.existsByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
-                    hv.getMaHocVien(), gt.getTopic().getMaTopic(), lop.getMaLop());
+            boolean isDone = feedbackRepository.existsFeedback(hv.getMaHocVien(),
+                     gt.getTopic().getMaTopic(), lop.getMaLop());
 
             return UserTopicResponse.builder()
                     .maTopic(gt.getTopic().getMaTopic())

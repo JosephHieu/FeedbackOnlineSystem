@@ -80,6 +80,8 @@ public enum ErrorCode {
     INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 nhé!", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp!", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.NOT_FOUND),
+    FEEDBACK_NOT_FOUND(10005, "Không tìm thấy đánh giá", HttpStatus.NOT_FOUND),
+
 
     ;
 
