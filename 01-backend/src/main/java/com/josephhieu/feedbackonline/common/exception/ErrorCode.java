@@ -37,12 +37,12 @@ public enum ErrorCode {
     // CLASS (LOP) ERRORS
     CLASS_NOT_EXISTED(3001, "Lớp học không tồn tại", HttpStatus.NOT_FOUND),
     CLASS_EXISTED(3002, "Tên lớp học đã tồn tại", HttpStatus.BAD_REQUEST),
-    CLASS_HAS_STUDENTS(3003, "Lớp học đang có học viên, không thể xóa cưng ơi", HttpStatus.CONFLICT),
-    CLASS_ALREADY_ASSIGNED(3004, "Lớp học này đã được gán mẫu khảo sát này rồi", HttpStatus.BAD_REQUEST),
+    CLASS_HAS_STUDENTS(3003, "Lớp học đang có học viên, không thể xóa!", HttpStatus.CONFLICT),
+    CLASS_ALREADY_ASSIGNED(3004, "Lớp học này đã được gán mẫu khảo sát này rồi!", HttpStatus.BAD_REQUEST),
     CLASS_HAS_NO_TEMPLATE(3005, "Lớp học không có template nào", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Request
-    METHOD_NOT_SUPPORTED(4005, "Phương thức HTTP không được hỗ trợ", HttpStatus.METHOD_NOT_ALLOWED),
+    METHOD_NOT_SUPPORTED(4005, "Phương thức HTTP không được hỗ trợ!", HttpStatus.METHOD_NOT_ALLOWED),
     INVALID_JSON(4006, "Dữ liệu gửi lên không đúng định dạng", HttpStatus.BAD_REQUEST),
     FIELD_REQUIRED(4007, "Trường dữ liệu này là bắt buộc", HttpStatus.BAD_REQUEST),
     INVALID_UUID_FORMAT(4008, "Định dạng mã định danh (UUID) không hợp lệ", HttpStatus.BAD_REQUEST),
@@ -59,26 +59,26 @@ public enum ErrorCode {
     EMPTY_FILE(6004, "File không có dữ liệu để xử lý", HttpStatus.BAD_REQUEST),
 
     // TRAINER ERRORS
-    TRAINER_NOT_EXISTED(7001, "Giảng viên không tồn tại cưng ơi", HttpStatus.NOT_FOUND),
+    TRAINER_NOT_EXISTED(7001, "Giảng viên không tồn tại", HttpStatus.NOT_FOUND),
     TRAINER_ACCOUNT_EXISTED(7002, "Account giảng viên này đã có người dùng rồi", HttpStatus.BAD_REQUEST),
     TRAINER_NAME_INVALID(7003, "Tên giảng viên không được chứa con số nhé", HttpStatus.BAD_REQUEST),
-    TRAINER_HAS_ASSIGNMENTS(7004, "Giảng viên này đang dạy, không xóa được đâu", HttpStatus.CONFLICT),
+    TRAINER_HAS_ASSIGNMENTS(7004, "Giảng viên này đang dạy, không xóa được", HttpStatus.CONFLICT),
 
     // TOPIC ERRORS
-    TOPIC_NOT_EXISTED(8001, "Chủ đề feedback không tồn tại cưng ơi", HttpStatus.NOT_FOUND),
-    TOPIC_EXISTED(8002, "Tên chủ đề này đã tồn tại rồi nhé", HttpStatus.BAD_REQUEST),
+    TOPIC_NOT_EXISTED(8001, "Chủ đề feedback không tồn tại ", HttpStatus.NOT_FOUND),
+    TOPIC_EXISTED(8002, "Tên chủ đề này đã tồn tại rồi", HttpStatus.BAD_REQUEST),
     TOPIC_IN_USE(8003, "Chủ đề này đã có dữ liệu feedback, không thể xóa cứng", HttpStatus.CONFLICT),
 
     // ASSIGN ERRORS (GÁN TOPIC)
     ASSIGN_NOT_EXISTED(9001, "Bản ghi gán topic không tồn tại", HttpStatus.NOT_FOUND),
-    ASSIGN_ALREADY_EXISTED(9002, "Chủ đề này đã được gán cho lớp rồi cưng ơi", HttpStatus.BAD_REQUEST),
+    ASSIGN_ALREADY_EXISTED(9002, "Chủ đề này đã được gán cho lớp rồi", HttpStatus.BAD_REQUEST),
     ASSIGN_EMPTY_TOPIC_LIST(9003, "Vui lòng chọn ít nhất một chủ đề để gán nhé", HttpStatus.BAD_REQUEST),
     ASSIGN_TRAINER_NOT_MATCH(9004, "Giảng viên này không khớp với cấu hình hiện tại của lớp", HttpStatus.BAD_REQUEST),
 
     // --- FEEDBACK ERRORS ---
-    FEEDBACK_ALREADY_SUBMITTED(10001, "Cưng đã thực hiện đánh giá cho chủ đề này rồi, không được tham lam nha!", HttpStatus.BAD_REQUEST),
-    INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 cưng nhé!", HttpStatus.BAD_REQUEST),
-    QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp, đừng 'hack' cưng ơi!", HttpStatus.BAD_REQUEST),
+    FEEDBACK_ALREADY_SUBMITTED(10001, "Bạn đã thực hiện đánh giá cho chủ đề này rồi!", HttpStatus.BAD_REQUEST),
+    INVALID_FEEDBACK_SCORE(10002, "Điểm đánh giá phải nằm trong khoảng từ 1 đến 5 nhé!", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_IN_TEMPLATE(10003, "Câu hỏi này không thuộc về mẫu khảo sát của lớp!", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.NOT_FOUND),
 
     ;
