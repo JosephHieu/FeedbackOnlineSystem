@@ -50,4 +50,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, UUID> {
 
     @Query("SELECT gt.topic FROM GanTopic gt WHERE gt.lop.maLop = :maLop")
     List<Topic> findTopicsByLopId(@Param("maLop") UUID maLop);
+
+    List<Feedback> findAllByLop_MaLop(UUID maLop);
 }

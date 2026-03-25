@@ -25,4 +25,6 @@ public interface FeedbackService {
     List<FeedbackExportResponse> getPreviewFeedback(UUID maLop, UUID maTopic);
 
     ByteArrayInputStream exportFeedbackToExcel(UUID maLop, UUID maTopic);
+
+    ByteArrayInputStream exportAllFeedbackByLop(UUID maLop);
 }

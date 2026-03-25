@@ -70,4 +70,33 @@ public class ExportController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(new InputStreamResource(in));
     }
+
+    /**
+     * 3. API XUẤT BÁO CÁO TỔNG HỢP TOÀN BỘ LỚP
+     * Quyền hạn: Chỉ ADMIN.
+     * Trả về file Excel chứa tất cả các Topic của lớp đó.
+     */
+    @GetMapping("/excel-all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<InputStreamResource> exportAllByLop(@RequestParam UUID maLop) {
+
+        log.info(">>> Admin đang thực hiện xuất báo cáo TỔNG HỢP cho lớp ID: {}", maLop);
+
+        ByteArrayInputStream in = feedbackService.exportAllFeedbackByLop(maLop);
+
+        // Tạo tên file chuyên nghiệp hơn: Bao_Cao_Tong_Hop_Lop_[8_ky_tu_cuoi].xlsx
+        String fileName = "Bao_Cao_Tong_Hop_" + maLop.toString().substring(24) + ".xlsx";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + fileName);
+        // Chống cache để dữ liệu luôn mới
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(new InputStreamResource(in));
+    }
 }
