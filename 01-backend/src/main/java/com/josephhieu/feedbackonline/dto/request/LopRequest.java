@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LopRequest {
 
-    @NotBlank(message = "Tên lớp không được để trống cưng ơi")
+    @NotBlank(message = "Tên lớp không được để trống bạn ơi")
     @Size(min = 2, max = 100, message = "Tên lớp phải từ 2 đến 100 ký tự nhé")
     private String tenLop;
 

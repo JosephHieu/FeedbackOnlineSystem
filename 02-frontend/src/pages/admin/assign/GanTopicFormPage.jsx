@@ -74,7 +74,7 @@ const GanTopicFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.danhSachMaTopic.length === 0) {
-      return toast.error("Vui lòng tích chọn ít nhất 1 Topic cưng ơi!");
+      return toast.error("Vui lòng tích chọn ít nhất 1 Topic!");
     }
 
     setLoading(true);

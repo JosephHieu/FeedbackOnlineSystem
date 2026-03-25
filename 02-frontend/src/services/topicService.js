@@ -44,7 +44,6 @@ export const topicService = {
 
   /**
    * 5. Xóa mềm / Thay đổi trạng thái (Toggle Status)
-   * Tương ứng với nút "Xóa" màu đỏ trên giao diện cưng gửi
    */
   toggleStatus: async (id) => {
     return await api.patch(`/topics/${id}/toggle-status`);

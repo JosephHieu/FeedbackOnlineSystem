@@ -11,8 +11,6 @@ export const ganTopicService = {
   },
 
   getTopicsByClassId: async (maLop) => {
-    // API này sẽ trả về danh sách các Topic đã được gán cho Lớp maLop
-    // Đường dẫn này phải khớp với Controller bên Java của cưng nhé
     const response = await api.get(`/assign-topics/class/${maLop}`);
     return response;
   },

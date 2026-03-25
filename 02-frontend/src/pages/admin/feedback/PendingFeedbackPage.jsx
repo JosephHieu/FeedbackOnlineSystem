@@ -21,7 +21,7 @@ const PendingFeedbackPage = () => {
 
   // --- LOGIC PHÂN TRANG ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Cưng muốn quá 5 thì chia trang nè
+  const itemsPerPage = 5;
 
   // Tính toán dữ liệu hiển thị cho trang hiện tại
   const indexOfLastItem = currentPage * itemsPerPage;

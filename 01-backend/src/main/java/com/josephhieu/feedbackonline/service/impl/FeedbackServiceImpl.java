@@ -46,8 +46,8 @@ public class FeedbackServiceImpl implements FeedbackService {
         HocVien hv = hocVienRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
 
-        // 3. XỬ LÝ GHI ĐÈ (RE-FEEDBACK)
-        // Tìm xem đã có feedback cũ chưa
+        // 3. XỬ LÝ GHI ĐÈ
+        // Tìm xem đã có feedback cũ
         Optional<Feedback> oldFeedback = feedbackRepository.findByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
                 hv.getMaHocVien(), request.getMaTopic(), request.getMaLop());
 
@@ -59,12 +59,8 @@ public class FeedbackServiceImpl implements FeedbackService {
             // Xóa feedback cũ
             feedbackRepository.delete(oldFeedback.get());
 
-            // ÉP HIBERNATE XÓA NGAY LẬP TỨC để tránh lỗi exists ở bước sau (nếu có dùng)
             feedbackRepository.flush();
         }
-
-        // --- BỎ BƯỚC 3 (CHECK EXISTS) CŨ CỦA CƯNG ĐI ---
-        // Vì mình đã cho phép đánh giá lại, nên không cần throw lỗi "ALREADY_SUBMITTED" nữa.
 
         // 4. TÌM CÁC THỰC THỂ KHÁC
         Lop lop = lopRepository.findById(request.getMaLop())

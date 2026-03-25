@@ -144,7 +144,7 @@ const TemplateFormPage = () => {
               onClick={() =>
                 template.tenTemplate
                   ? setStep(2)
-                  : toast.error("Nhập tên đã cưng!")
+                  : toast.error("Bạn chưa nhập tên!")
               }
               className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-[0.98]"
             >

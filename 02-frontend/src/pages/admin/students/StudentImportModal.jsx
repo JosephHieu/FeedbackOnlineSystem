@@ -47,7 +47,7 @@ const StudentImportModal = ({ isOpen, onClose, maLop, tenLop, onRefresh }) => {
   };
 
   const handleUpload = async () => {
-    if (!file) return toast.error("Cưng chưa chọn file mà!");
+    if (!file) return toast.error("Bạn chưa chọn file mà!");
 
     setLoading(true);
     try {

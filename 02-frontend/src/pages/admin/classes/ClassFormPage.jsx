@@ -26,7 +26,6 @@ const ClassFormPage = () => {
         // 2. Nếu là chế độ Edit (có id), lấy thông tin lớp cũ
         if (id) {
           const cRes = await classService.getLopById(id);
-          // Lưu ý: Tùy vào cấu trúc Response của cưng, thường là cRes.data hoặc cRes trực tiếp
           const classData = cRes?.data || cRes;
 
           setFormData({

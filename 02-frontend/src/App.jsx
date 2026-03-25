@@ -124,7 +124,6 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* Bỏ dấu / và chữ user ở đầu đi cưng nhé */}
           <Route path="home" element={<UserHomePage />} />
           <Route path="feedback/:maTopic" element={<FeedbackFormPage />} />
           <Route index element={<Navigate to="home" replace />} />

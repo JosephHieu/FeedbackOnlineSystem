@@ -38,6 +38,11 @@ spring:
             enable: true
 
 logging:
+  level:
+    root: info
+    com.josehhieu.feedbackonline: debug
+    org.hibernate.orm.jdbc.bind: trace
+    org.hibernate.SQL: debug
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}] %-5level %logger{36} - %msg%n"
 

@@ -52,7 +52,6 @@ export const authService = {
    * @param {Object} data - { oldPassword, newPassword, confirmPassword }
    */
   changePassword: async (passwordData) => {
-    // Gọi API POST /auth/change-password (hoặc /change-password tùy controller cưng đặt)
     return await api.post("/auth/change-password", passwordData);
   },
 };

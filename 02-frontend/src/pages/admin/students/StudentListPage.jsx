@@ -109,7 +109,7 @@ const StudentListPage = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-white">
-      {/* Header & Filter (Giữ nguyên của cưng) */}
+      {/* Header & Filter */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         <div>
           <p className="text-slate-500 text-sm font-medium">

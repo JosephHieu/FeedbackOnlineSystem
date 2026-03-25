@@ -14,28 +14,68 @@ const FeedbackFormPage = () => {
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (topic?.maTemplate) {
-      // Chỉ lấy danh sách câu hỏi, chưa lấy dữ liệu đã nộp cũ
-      feedbackService.getQuestionsByTemplate(topic.maTemplate).then((res) => {
-        const list = res.danhSachCauHoi || [];
+    const fetchData = async () => {
+      if (!topic?.maTemplate) return;
+
+      setLoading(true);
+      try {
+        // 1. Lấy danh sách câu hỏi
+        const resQuestions = await feedbackService.getQuestionsByTemplate(
+          topic.maTemplate,
+        );
+        const list = resQuestions.danhSachCauHoi || [];
         setQuestions(list);
 
-        // Khởi tạo answers mặc định (luôn là trống dù đã hoàn thành hay chưa)
-        const init = {};
-        list.forEach((q) => {
-          init[q.maCauHoi] = { diem: q.diemToiDa || 5, ghiChu: "" };
-        });
-        setAnswers(init);
+        // 2. Kiểm tra nếu đã hoàn thành thì lấy dữ liệu cũ
+        if (topic.completed) {
+          try {
+            const oldData = await feedbackService.getSubmittedFeedback(
+              topic.maLop,
+              topic.maTopic,
+            );
+            const oldAnswers = {};
+
+            // Map dữ liệu từ Backend trả về vào State
+            oldData.chiTietFeedback.forEach((item) => {
+              oldAnswers[item.maCauHoi] = {
+                diem: item.diem,
+                ghiChu: item.ghiChu || "",
+              };
+            });
+            setAnswers(oldAnswers);
+          } catch (err) {
+            console.error("Không lấy được feedback cũ:", err);
+            // Nếu lỗi lấy feedback cũ, vẫn init mặc định để user làm lại
+            initDefaultAnswers(list);
+          }
+        } else {
+          initDefaultAnswers(list);
+        }
+      } catch (err) {
+        toast.error("Lỗi tải dữ liệu mẫu đánh giá");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const initDefaultAnswers = (list) => {
+      const init = {};
+      list.forEach((q) => {
+        init[q.maCauHoi] = { diem: q.diemToiDa || 5, ghiChu: "" };
       });
-    }
+      setAnswers(init);
+    };
+
+    fetchData();
   }, [topic]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // --- LOGIC KIỂM TRA ĐIỂM THẤP (Giữ nguyên vì rất cần thiết) ---
+    // --- LOGIC KIỂM TRA ĐIỂM THẤP ---
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       const answer = answers[q.maCauHoi];
@@ -44,7 +84,7 @@ const FeedbackFormPage = () => {
 
       if ((diem === 1 || diem === 2) && !ghiChu) {
         return toast.error(
-          `Câu số ${i + 1} điểm quá thấp, bạn vui lòng viết lý do vào phần nhận xét nhé!`,
+          `Câu số ${i + 1} điểm quá thấp, Bạn vui lòng viết lý do vào phần nhận xét nhé!`,
         );
       }
     }
@@ -64,13 +104,19 @@ const FeedbackFormPage = () => {
 
     try {
       await feedbackService.submitFeedback(payload);
-      toast.success("Gửi đánh giá thành công!");
+      toast.success(
+        topic.completed ? "Cập nhật thành công!" : "Gửi đánh giá thành công!",
+      );
       navigate("/user/home");
     } catch (error) {
-      console.error("Lỗi gửi feedback:", error);
-      toast.error("Có lỗi xảy ra khi gửi đánh giá.");
+      // Error đã được toast ở api.js interceptor rồi
     }
   };
+
+  if (loading)
+    return (
+      <div className="p-10 text-center font-bold">Đang tải dữ liệu...</div>
+    );
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -107,7 +153,11 @@ const FeedbackFormPage = () => {
               return (
                 <div
                   key={q.maCauHoi}
-                  className={`bg-white p-6 rounded-[2rem] shadow-sm border transition-all ${isLowScore ? "border-rose-100 bg-rose-50/10" : "border-slate-100"}`}
+                  className={`bg-white p-6 rounded-[2rem] shadow-sm border transition-all ${
+                    isLowScore
+                      ? "border-rose-100 bg-rose-50/10"
+                      : "border-slate-100"
+                  }`}
                 >
                   <div className="flex gap-4 mb-4">
                     <span
@@ -132,7 +182,7 @@ const FeedbackFormPage = () => {
                       </label>
                       <select
                         className={`w-full p-3 border-none rounded-xl font-black outline-none focus:ring-2 ${isLowScore ? "bg-rose-50 text-rose-600 focus:ring-rose-200" : "bg-slate-50 text-slate-700 focus:ring-indigo-500"}`}
-                        value={answers[q.maCauHoi]?.diem}
+                        value={answers[q.maCauHoi]?.diem || 5}
                         onChange={(e) =>
                           setAnswers({
                             ...answers,
@@ -171,11 +221,11 @@ const FeedbackFormPage = () => {
                       <textarea
                         placeholder={
                           isLowScore
-                            ? "Vui lòng cho biết lý do cưng chấm điểm thấp thế này..."
+                            ? "Vui lòng cho biết lý do bạn chấm điểm thấp thế này..."
                             : "Vui lòng nhập cảm nhận của bạn..."
                         }
                         className={`w-full p-3 border-none rounded-xl font-medium outline-none focus:ring-2 min-h-[80px] ${isLowScore ? "bg-rose-50/50 text-rose-700 focus:ring-rose-200" : "bg-slate-50 text-slate-600 focus:ring-indigo-500"}`}
-                        value={answers[q.maCauHoi]?.ghiChu}
+                        value={answers[q.maCauHoi]?.ghiChu || ""}
                         onChange={(e) =>
                           setAnswers({
                             ...answers,

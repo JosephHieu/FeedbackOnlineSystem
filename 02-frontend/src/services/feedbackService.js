@@ -23,4 +23,11 @@ export const feedbackService = {
   submitFeedback: (feedbackData) => {
     return api.post("/user/feedbacks/submit", feedbackData);
   },
+
+  // 5. Lấy chi tiết bài đã đánh giá
+  getSubmittedFeedback: (maLop, maTopic) => {
+    return api.get("/user/feedbacks/detail", {
+      params: { maLop, maTopic },
+    });
+  },
 };

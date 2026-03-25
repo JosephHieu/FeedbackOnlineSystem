@@ -33,12 +33,12 @@ public class FeedbackController {
         feedbackService.submitFeedback(request);
 
         return ApiResponse.<String>builder()
-                .result("Cảm ơn cưng đã hoàn thành khảo sát! Ý kiến của cưng rất quý báu.")
+                .result("Cảm ơn bạn đã hoàn thành khảo sát! Ý kiến của bạn rất quý báu.")
                 .build();
     }
 
     /**
-     * 2. API LẤY DANH SÁCH HỌC VIÊN CHƯA FEEDBACK (Trang cưng gửi hình)
+     * 2. API LẤY DANH SÁCH HỌC VIÊN CHƯA FEEDBACK (Trang bạn gửi hình)
      * Quyền hạn: Chỉ ADMIN (ROLE_ADMIN) mới được xem danh sách này.
      */
     @GetMapping("/pending")

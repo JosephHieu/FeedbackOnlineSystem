@@ -12,7 +12,7 @@ const Header = ({ isSidebarOpen, setSidebarOpen, showToggle = true }) => {
   const handleLogout = () => {
     Swal.fire({
       title: "Đăng xuất?",
-      text: "Cưng có chắc chắn muốn rời khỏi hệ thống không?",
+      text: "Bạn có chắc chắn muốn rời khỏi hệ thống không?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#e11d48", // Màu rose-600 đồng bộ với nút đăng xuất

@@ -111,7 +111,7 @@ public class HocVienServiceImpl implements HocVienService {
         HocVien hocVien = hocVienRepository.findById(maHocVien)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
 
-        // Kiểm tra nếu status bị null thì mặc định là false (hoặc true tùy cưng)
+        // Kiểm tra nếu status bị null thì mặc định là false (hoặc true tùy bạn)
         // Sau đó mới thực hiện đảo ngược
         Boolean currentStatus = hocVien.getStatus();
         if (currentStatus == null) {

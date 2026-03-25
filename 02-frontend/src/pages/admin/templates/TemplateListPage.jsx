@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { templateService } from "../../../services/templateService";
 import Swal from "sweetalert2";
-import debounce from "lodash.debounce"; // Cưng nhớ: npm install lodash.debounce
+import debounce from "lodash.debounce";
 
 const TemplateListPage = () => {
   const [templates, setTemplates] = useState([]);
@@ -18,7 +18,7 @@ const TemplateListPage = () => {
   const fetchTemplates = useCallback(async (page = 1, search = "") => {
     setLoading(true);
     try {
-      // Gọi với size = 5 như cưng muốn
+      // Gọi với size = 5
       const response = await templateService.getAllTemplates(page, 5, search);
       setTemplates(response.data || []);
       setPagination({

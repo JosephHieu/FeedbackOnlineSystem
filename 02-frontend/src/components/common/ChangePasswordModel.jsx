@@ -21,7 +21,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
       onClose();
     } catch (err) {
-      // Lỗi (sai pass cũ, ko khớp...) Interceptor của cưng đã hiện toast error rồi
+      // Lỗi (sai pass cũ, ko khớp...) Interceptor của Bạn đã hiện toast error rồi
     } finally {
       setLoading(false);
     }
