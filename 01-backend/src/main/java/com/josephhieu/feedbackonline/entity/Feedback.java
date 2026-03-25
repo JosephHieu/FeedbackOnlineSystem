@@ -2,6 +2,9 @@ package com.josephhieu.feedbackonline.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -34,4 +37,7 @@ public class Feedback extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "\"MaTrainer\"")
     private Trainer trainer;
+
+    @OneToMany(mappedBy = "feedback", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChiTietFeedback> chiTietFeedbacks;
 }

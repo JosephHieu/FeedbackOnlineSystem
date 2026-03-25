@@ -170,5 +170,29 @@ public class FeedbackServiceImpl implements FeedbackService {
         }).toList();
     }
 
+    @Override
+    public FeedbackResponse getSubmittedFeedback(UUID maLop, UUID maTopic) {
+        // 1. Lấy user đang đăng nhập
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        HocVien hv = hocVienRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
+
+        // 2. Tìm feedback cũ
+        Feedback feedback = feedbackRepository.findByHocVien_MaHocVienAndTopic_MaTopicAndLop_MaLop(
+                        hv.getMaHocVien(), maTopic, maLop)
+                .orElseThrow(() -> new AppException(ErrorCode.FEEDBACK_NOT_FOUND));
+
+        // 3. Trả về DTO chứa các câu trả lời cũ
+        return FeedbackResponse.builder()
+                .maFeedback(feedback.getMaFeedback())
+                .chiTietFeedback(feedback.getChiTietFeedbacks().stream()
+                        .map(ct -> FeedbackResponse.ChiTietResponse.builder()
+                                .maCauHoi(ct.getCauHoi().getMaCauHoi())
+                                .diem(ct.getDiem())
+                                .ghiChu(ct.getGhiChu())
+                                .build())
+                        .toList())
+                .build();
+    }
 
 }

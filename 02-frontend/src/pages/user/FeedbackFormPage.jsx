@@ -17,33 +17,17 @@ const FeedbackFormPage = () => {
 
   useEffect(() => {
     if (topic?.maTemplate) {
-      // 1. Lấy danh sách câu hỏi như cũ
+      // Chỉ lấy danh sách câu hỏi, chưa lấy dữ liệu đã nộp cũ
       feedbackService.getQuestionsByTemplate(topic.maTemplate).then((res) => {
         const list = res.danhSachCauHoi || [];
         setQuestions(list);
 
-        // 2. NẾU ĐÃ HOÀN THÀNH
-        if (topic.completed) {
-          feedbackService
-            .getSubmittedFeedback(topic.maLop, topic.maTopic)
-            .then((oldData) => {
-              const oldAnswers = {};
-              // Map dữ liệu cũ vào state answers
-              oldData.chiTietFeedback.forEach((item) => {
-                oldAnswers[item.maCauHoi] = {
-                  diem: item.diem,
-                  ghiChu: item.ghiChu,
-                };
-              });
-              setAnswers(oldAnswers);
-            });
-        } else {
-          const init = {};
-          list.forEach((q) => {
-            init[q.maCauHoi] = { diem: q.diemToiDa || 5, ghiChu: "" };
-          });
-          setAnswers(init);
-        }
+        // Khởi tạo answers mặc định (luôn là trống dù đã hoàn thành hay chưa)
+        const init = {};
+        list.forEach((q) => {
+          init[q.maCauHoi] = { diem: q.diemToiDa || 5, ghiChu: "" };
+        });
+        setAnswers(init);
       });
     }
   }, [topic]);
@@ -51,17 +35,16 @@ const FeedbackFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // --- LOGIC KIỂM TRA ĐIỂM THẤP ---
+    // --- LOGIC KIỂM TRA ĐIỂM THẤP (Giữ nguyên vì rất cần thiết) ---
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       const answer = answers[q.maCauHoi];
       const diem = parseInt(answer?.diem);
       const ghiChu = answer?.ghiChu?.trim();
 
-      // Nếu điểm là 1 hoặc 2 mà không có ghi chú -> Chặn lại
       if ((diem === 1 || diem === 2) && !ghiChu) {
         return toast.error(
-          `Câu số ${i + 1} điểm quá thấp, cưng vui lòng viết lý do vào phần nhận xét nhé!`,
+          `Câu số ${i + 1} điểm quá thấp, bạn vui lòng viết lý do vào phần nhận xét nhé!`,
         );
       }
     }
@@ -81,10 +64,11 @@ const FeedbackFormPage = () => {
 
     try {
       await feedbackService.submitFeedback(payload);
-      toast.success("Gửi đánh giá thành công!.");
+      toast.success("Gửi đánh giá thành công!");
       navigate("/user/home");
     } catch (error) {
       console.error("Lỗi gửi feedback:", error);
+      toast.error("Có lỗi xảy ra khi gửi đánh giá.");
     }
   };
 
@@ -120,21 +104,14 @@ const FeedbackFormPage = () => {
           >
             {questions.map((q, idx) => {
               const isLowScore = parseInt(answers[q.maCauHoi]?.diem) <= 2;
-
               return (
                 <div
                   key={q.maCauHoi}
-                  className={`bg-white p-6 rounded-[2rem] shadow-sm border transition-all hover:shadow-md ${
-                    isLowScore
-                      ? "border-rose-100 bg-rose-50/10"
-                      : "border-slate-100"
-                  }`}
+                  className={`bg-white p-6 rounded-[2rem] shadow-sm border transition-all ${isLowScore ? "border-rose-100 bg-rose-50/10" : "border-slate-100"}`}
                 >
                   <div className="flex gap-4 mb-4">
                     <span
-                      className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center font-black text-sm text-white ${
-                        isLowScore ? "bg-rose-500" : "bg-slate-900"
-                      }`}
+                      className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center font-black text-sm text-white ${isLowScore ? "bg-rose-500" : "bg-slate-900"}`}
                     >
                       {idx + 1}
                     </span>
@@ -154,11 +131,7 @@ const FeedbackFormPage = () => {
                         Mức điểm
                       </label>
                       <select
-                        className={`w-full p-3 border-none rounded-xl font-black outline-none focus:ring-2 ${
-                          isLowScore
-                            ? "bg-rose-50 text-rose-600 focus:ring-rose-200"
-                            : "bg-slate-50 text-slate-700 focus:ring-indigo-500"
-                        }`}
+                        className={`w-full p-3 border-none rounded-xl font-black outline-none focus:ring-2 ${isLowScore ? "bg-rose-50 text-rose-600 focus:ring-rose-200" : "bg-slate-50 text-slate-700 focus:ring-indigo-500"}`}
                         value={answers[q.maCauHoi]?.diem}
                         onChange={(e) =>
                           setAnswers({
@@ -187,7 +160,7 @@ const FeedbackFormPage = () => {
                           className={
                             isLowScore ? "text-rose-500" : "text-indigo-400"
                           }
-                        />
+                        />{" "}
                         Nhận xét chi tiết{" "}
                         {isLowScore && (
                           <span className="text-rose-500 font-black">
@@ -201,11 +174,7 @@ const FeedbackFormPage = () => {
                             ? "Vui lòng cho biết lý do cưng chấm điểm thấp thế này..."
                             : "Vui lòng nhập cảm nhận của bạn..."
                         }
-                        className={`w-full p-3 border-none rounded-xl font-medium outline-none focus:ring-2 min-h-[80px] ${
-                          isLowScore
-                            ? "bg-rose-50/50 text-rose-700 focus:ring-rose-200"
-                            : "bg-slate-50 text-slate-600 focus:ring-indigo-500"
-                        }`}
+                        className={`w-full p-3 border-none rounded-xl font-medium outline-none focus:ring-2 min-h-[80px] ${isLowScore ? "bg-rose-50/50 text-rose-700 focus:ring-rose-200" : "bg-slate-50 text-slate-600 focus:ring-indigo-500"}`}
                         value={answers[q.maCauHoi]?.ghiChu}
                         onChange={(e) =>
                           setAnswers({
@@ -234,7 +203,7 @@ const FeedbackFormPage = () => {
             form="feedback-form"
             className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-lg shadow-xl hover:bg-indigo-600 transition-all active:scale-95 uppercase tracking-widest"
           >
-            {topic.completed ? "CẬP NHẬT ĐÁNH GIÁ" : "GỬI ĐÁNH GIÁ NGAY"}{" "}
+            {topic?.completed ? "CẬP NHẬT ĐÁNH GIÁ" : "GỬI ĐÁNH GIÁ NGAY"}
           </button>
         </div>
       </div>

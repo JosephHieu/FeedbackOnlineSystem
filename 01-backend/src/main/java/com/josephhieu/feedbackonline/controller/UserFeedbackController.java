@@ -66,4 +66,13 @@ public class UserFeedbackController {
                         "Cảm ơn bạn đã gửi đánh giá!",
                         servletRequest.getRequestURI()));
     }
+
+    @GetMapping("/detail")
+    public ResponseEntity<FeedbackResponse> getFeedbackDetail(
+            @RequestParam UUID maLop,
+            @RequestParam UUID maTopic) {
+
+        return ResponseEntity.ok(feedbackService.getSubmittedFeedback(maLop, maTopic));
+    }
+
 }

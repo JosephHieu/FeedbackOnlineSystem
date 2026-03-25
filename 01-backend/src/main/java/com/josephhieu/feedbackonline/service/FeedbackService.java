@@ -17,4 +17,6 @@ public interface FeedbackService {
     List<PendingFeedbackResponse> getPendingFeedbackList(UUID maLop, UUID maTopic);
 
     List<UserTopicResponse> getTopicsForStudent(String username);
+
+    FeedbackResponse getSubmittedFeedback(UUID maLop, UUID maTopic);
 }
