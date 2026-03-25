@@ -48,6 +48,17 @@ export const feedbackService = {
     });
   },
 
+  /**
+   * 8. Xuất file Excel TỔNG HỢP toàn bộ lớp (Pivot table chuyên nghiệp)
+   * Gọi đến ExportController -> @GetMapping("/excel-all")
+   */
+  exportAllClassFeedbackExcel: (maLop) => {
+    return api.get("/admin/export/excel-all", {
+      params: { maLop },
+      responseType: "blob", // Rất quan trọng để xử lý file nhị phân
+    });
+  },
+
   getTopicsByClass: (maLop) => {
     return api.get(`/assign-topics/class/${maLop}`);
   },
