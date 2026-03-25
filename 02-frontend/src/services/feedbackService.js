@@ -30,4 +30,25 @@ export const feedbackService = {
       params: { maLop, maTopic },
     });
   },
+
+  /** * 6. Xem trước kết quả đánh giá (Admin - Preview)
+   */
+  getExportPreview: (maLop, maTopic) => {
+    return api.get("/admin/export/preview", {
+      params: { maLop, maTopic },
+    });
+  },
+
+  /** * 7. Xuất file Excel kết quả (Admin - Download)
+   */
+  exportFeedbackExcel: (maLop, maTopic) => {
+    return api.get("/admin/export/excel", {
+      params: { maLop, maTopic },
+      responseType: "blob",
+    });
+  },
+
+  getTopicsByClass: (maLop) => {
+    return api.get(`/assign-topics/class/${maLop}`);
+  },
 };

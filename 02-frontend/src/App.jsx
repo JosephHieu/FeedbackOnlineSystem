@@ -25,6 +25,7 @@ import GanTopicFormPage from "./pages/admin/assign/GanTopicFormPage";
 import PendingFeedbackPage from "./pages/admin/feedback/PendingFeedbackPage";
 import UserHomePage from "./pages/user/UserHomePage";
 import FeedbackFormPage from "./pages/user/FeedbackFormPage";
+import ExportPage from "./pages/admin/ExportPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -109,7 +110,7 @@ function App() {
           {/* Học viên chưa Feedback */}
           <Route path="pending" element={<PendingFeedbackPage />} />
           {/* Xuất kết quả */}
-          <Route path="export" element={<div>Trang xuất kết quả</div>} />
+          <Route path="export" element={<ExportPage />} />
           {/* Xóa toàn bộ dữ liệu */}
           <Route path="clear" element={<div>Trang xóa dữ liệu</div>} />
           <Route index element={<Navigate to="dashboard" replace />} />
