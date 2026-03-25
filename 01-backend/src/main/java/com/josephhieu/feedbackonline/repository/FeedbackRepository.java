@@ -2,6 +2,7 @@ package com.josephhieu.feedbackonline.repository;
 
 import com.josephhieu.feedbackonline.entity.Feedback;
 import com.josephhieu.feedbackonline.entity.HocVien;
+import com.josephhieu.feedbackonline.entity.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,4 +44,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, UUID> {
             UUID maTopic,
             UUID maLop
     );
+
+    // Tìm tất cả Feedback dựa trên MaLop và MaTopic
+    List<Feedback> findAllByLop_MaLopAndTopic_MaTopic(UUID maLop, UUID maTopic);
+
+    @Query("SELECT gt.topic FROM GanTopic gt WHERE gt.lop.maLop = :maLop")
+    List<Topic> findTopicsByLopId(@Param("maLop") UUID maLop);
 }

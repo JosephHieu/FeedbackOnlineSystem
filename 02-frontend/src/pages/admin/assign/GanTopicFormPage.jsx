@@ -11,7 +11,7 @@ const GanTopicFormPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams(); // Quản lý URL Params
 
-  // Lấy mã lớp từ URL nếu có (ví dụ: ?maLop=abcd)
+  // Lấy mã lớp từ URL nếu có
   const maLopFromUrl = searchParams.get("maLop") || "";
 
   const [lops, setLops] = useState([]);

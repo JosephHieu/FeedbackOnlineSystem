@@ -3,6 +3,7 @@ package com.josephhieu.feedbackonline.service.impl;
 import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.FeedbackRequest;
+import com.josephhieu.feedbackonline.dto.response.FeedbackExportResponse;
 import com.josephhieu.feedbackonline.dto.response.FeedbackResponse;
 import com.josephhieu.feedbackonline.dto.response.PendingFeedbackResponse;
 import com.josephhieu.feedbackonline.dto.response.UserTopicResponse;
@@ -12,11 +13,16 @@ import com.josephhieu.feedbackonline.repository.*;
 import com.josephhieu.feedbackonline.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -189,6 +195,80 @@ public class FeedbackServiceImpl implements FeedbackService {
                                 .build())
                         .toList())
                 .build();
+    }
+
+    @Override
+    public List<FeedbackExportResponse> getPreviewFeedback(UUID maLop, UUID maTopic) {
+
+        List<Feedback> feedbacks = feedbackRepository.findAllByLop_MaLopAndTopic_MaTopic(maLop, maTopic);
+
+        return feedbacks.stream().map(fb -> FeedbackExportResponse.builder()
+                        .tenHocVien(fb.getHocVien().getTenHocVien())
+                        .tenLop(fb.getLop().getTenLop())
+                        .tenTopic(fb.getTopic().getTenTopic())
+                        .tenTrainer(fb.getTrainer().getTenTrainer())
+                        .chiTietFeedback(fb.getChiTietFeedbacks().stream().map(ct ->
+                                FeedbackExportResponse.ChiTietExport.builder()
+                                        .tenCauHoi(ct.getCauHoi().getTenCauHoi())
+                                        .diem(ct.getDiem())
+                                        .ghiChu(ct.getGhiChu())
+                                        .build())
+                                .toList())
+                .build())
+                .toList();
+    }
+
+    @Override
+    public ByteArrayInputStream exportFeedbackToExcel(UUID maLop, UUID maTopic) {
+
+        List<FeedbackExportResponse> data = getPreviewFeedback(maLop, maTopic);
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Ket_Qua_Feedback");
+
+            // 1. Tạo Header Style
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            // 2. Tạo Header Row
+            Row headerRow = sheet.createRow(0);
+            String[] columns = {"STT", "Học Viên", "Lớp", "Topic", "Trainer", "Câu Hỏi", "Điểm", "Ghi Chú"};
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // 3. Đổ dữ liệu
+            int rowIdx = 1;
+            int stt = 1;
+            for (FeedbackExportResponse fb : data) {
+                for (FeedbackExportResponse.ChiTietExport ct : fb.getChiTietFeedback()) {
+                    Row row = sheet.createRow(rowIdx++);
+                    row.createCell(0).setCellValue(stt);
+                    row.createCell(1).setCellValue(fb.getTenHocVien());
+                    row.createCell(2).setCellValue(fb.getTenLop());
+                    row.createCell(3).setCellValue(fb.getTenTopic());
+                    row.createCell(4).setCellValue(fb.getTenTrainer());
+                    row.createCell(5).setCellValue(ct.getTenCauHoi());
+                    row.createCell(6).setCellValue(ct.getDiem());
+                    row.createCell(7).setCellValue(ct.getGhiChu());
+                }
+                stt++;
+            }
+
+            // Tự động căn chỉnh độ rộng cột
+            for (int i = 0; i < columns.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi xuất Excel: " + e.getMessage());
+        }
     }
 
 }
