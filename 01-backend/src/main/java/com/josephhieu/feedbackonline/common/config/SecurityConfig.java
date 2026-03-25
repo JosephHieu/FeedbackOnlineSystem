@@ -56,9 +56,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/topics/**").authenticated()
                         .requestMatchers("/api/v1/assign-topics/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/feedbacks/pending").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin/export/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/feedbacks/submit").hasRole("USER")
                         .requestMatchers("/api/v1/user/**").hasRole("USER")
-
 
                         .anyRequest().authenticated())
 
@@ -85,7 +85,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Trace_Id"));
 
-        configuration.setExposedHeaders(List.of("X-Trace-Id"));
+        configuration.setExposedHeaders(List.of("X-Trace-Id", "Content-Disposition"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
