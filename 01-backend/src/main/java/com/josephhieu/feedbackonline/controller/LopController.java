@@ -70,7 +70,6 @@ public class LopController {
         log.info("REST request to save Lop : {}", lopRequest.getTenLop());
         LopResponse result = lopService.createLop(lopRequest);
 
-        // Trả về mã 201 Created (Đúng chuẩn RESTful khi tạo mới tài nguyên)
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(result, "Thêm lớp học thành công", request.getRequestURI()));
     }

@@ -33,7 +33,7 @@ public class ExportController {
      */
     @GetMapping("/preview")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<List<FeedbackExportResponse>> getPreview(
+    public ResponseEntity<ApiResponse<List<FeedbackExportResponse>>> getPreview(
             @RequestParam UUID maLop,
             @RequestParam UUID maTopic) {
 
@@ -41,9 +41,12 @@ public class ExportController {
 
         List<FeedbackExportResponse> result = feedbackService.getPreviewFeedback(maLop, maTopic);
 
-        return ApiResponse.<List<FeedbackExportResponse>>builder()
+        ApiResponse<List<FeedbackExportResponse>> response = ApiResponse.<List<FeedbackExportResponse>>builder()
                 .result(result)
+                .message("Lấy dữ liệu xem trước thành công")
                 .build();
+
+        return ResponseEntity.ok(response);
     }
 
     /**

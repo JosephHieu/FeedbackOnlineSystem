@@ -22,14 +22,16 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ApiResponse<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody @Valid LoginRequest request) {
 
         AuthResponse result = authService.login(request);
 
-        return ApiResponse.<AuthResponse>builder()
+        ApiResponse<AuthResponse> response = ApiResponse.<AuthResponse>builder()
                 .result(result)
                 .message("Đăng nhập thành công")
                 .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/change-password")
