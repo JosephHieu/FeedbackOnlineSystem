@@ -21,9 +21,10 @@ public enum ErrorCode {
     INVALID_PASSWORD(1008, "Mật khẩu phải có ít nhất 8 ký tự", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME(1009, "Tên đăng nhập không đúng định dạng", HttpStatus.BAD_REQUEST),
     FORBIDDEN(1010, "Bạn không có quyền truy cập tài nguyên này", HttpStatus.FORBIDDEN),
-    OLD_PASSWORD_NOT_MATCH(1011, "Mật khẩu cũ không chính xác bạn ơi", HttpStatus.BAD_REQUEST),
+    OLD_PASSWORD_NOT_MATCH(1011, "Mật khẩu cũ không chính xác!", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_CHANGED(1012, "Mật khẩu mới không được trùng với mật khẩu cũ", HttpStatus.BAD_REQUEST),
     CONFIRM_PASSWORD_NOT_MATCH(1013, "Xác nhận mật khẩu mới không khớp", HttpStatus.BAD_REQUEST),
+    RESET_PASSWORD_INVALID(1014, "Mật khẩu xác nhận xóa hệ thống không chính xác", HttpStatus.BAD_REQUEST),
 
     // TEMPLATE ERRORS
     TEMPLATE_NOT_EXISTED(2001, "Mẫu feedback không tồn tại", HttpStatus.NOT_FOUND),
