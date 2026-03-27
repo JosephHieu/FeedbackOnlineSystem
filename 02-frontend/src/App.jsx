@@ -26,6 +26,7 @@ import PendingFeedbackPage from "./pages/admin/feedback/PendingFeedbackPage";
 import UserHomePage from "./pages/user/UserHomePage";
 import FeedbackFormPage from "./pages/user/FeedbackFormPage";
 import ExportPage from "./pages/admin/ExportPage";
+import SystemReset from "./pages/admin/system/SystemReset";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -112,7 +113,7 @@ function App() {
           {/* Xuất kết quả */}
           <Route path="export" element={<ExportPage />} />
           {/* Xóa toàn bộ dữ liệu */}
-          <Route path="clear" element={<div>Trang xóa dữ liệu</div>} />
+          <Route path="clear" element={<SystemReset />} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

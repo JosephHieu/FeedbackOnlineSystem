@@ -1,5 +1,10 @@
 import api from "./api";
 
-export const resetSystemService = async (password) => {
-  return await api.post("/admin/reset-system", { password });
+/**
+ * Gọi API Reset Hệ thống
+ * @param {string} password - Mật khẩu Admin để xác nhận
+ * @returns {Promise} - Trả về dữ liệu từ Interceptor (result hoặc throw error)
+ */
+export const resetSystemService = (password) => {
+  return api.post("/admin/system/reset", { password });
 };

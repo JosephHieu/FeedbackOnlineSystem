@@ -5,7 +5,6 @@ import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.SystemResetRequest;
 import com.josephhieu.feedbackonline.dto.response.SystemResetResponse;
 import com.josephhieu.feedbackonline.entity.Admin;
-import com.josephhieu.feedbackonline.entity.HocVien;
 import com.josephhieu.feedbackonline.repository.*;
 import com.josephhieu.feedbackonline.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
-    private final HocVienRepository hocVienRepository;
     private final FeedbackRepository feedbackRepository;
     private final ChiTietFeedbackRepository chiTietFeedbackRepository;
     private final GanTopicRepository ganTopicRepository;

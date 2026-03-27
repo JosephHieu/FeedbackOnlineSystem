@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/assign-topics/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/feedbacks/pending").hasRole("ADMIN")
                         .requestMatchers("/api/v1/admin/export/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin/system/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/feedbacks/submit").hasRole("USER")
                         .requestMatchers("/api/v1/user/**").hasRole("USER")
 
