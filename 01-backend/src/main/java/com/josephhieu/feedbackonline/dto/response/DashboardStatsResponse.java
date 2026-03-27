@@ -1,6 +1,5 @@
 package com.josephhieu.feedbackonline.dto.response;
 
-import com.josephhieu.feedbackonline.dto.ChartDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

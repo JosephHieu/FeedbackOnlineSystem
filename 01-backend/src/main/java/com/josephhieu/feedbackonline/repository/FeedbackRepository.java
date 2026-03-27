@@ -1,6 +1,6 @@
 package com.josephhieu.feedbackonline.repository;
 
-import com.josephhieu.feedbackonline.dto.ChartDataDTO;
+import com.josephhieu.feedbackonline.dto.response.ChartDataDTO;
 import com.josephhieu.feedbackonline.entity.Feedback;
 import com.josephhieu.feedbackonline.entity.HocVien;
 import com.josephhieu.feedbackonline.entity.Topic;
@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,10 +56,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, UUID> {
 
     List<Feedback> findAllByLop_MaLop(UUID maLop);
 
-    @Query("SELECT new com.josephhieu.feedbackonline.dto.response.ChartDataDTO(CAST(f.createdAt AS date), COUNT(f)) " +
+    @Query("SELECT new com.josephhieu.feedbackonline.dto.response.ChartDataDTO(CAST(f.createdAt AS LocalDate), COUNT(f)) " +
             "FROM Feedback f " +
             "WHERE f.createdAt >= :startDate " +
-            "GROUP BY CAST(f.createdAt AS date) " +
-            "ORDER BY CAST(f.createdAt AS date) ASC")
+            "GROUP BY CAST(f.createdAt AS LocalDate) " +
+            "ORDER BY CAST(f.createdAt AS LocalDate) ASC")
     List<ChartDataDTO> getFeedbackCountByDate(@Param("startDate") LocalDateTime startDate);
 }

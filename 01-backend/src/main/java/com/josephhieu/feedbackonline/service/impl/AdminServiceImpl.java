@@ -3,6 +3,7 @@ package com.josephhieu.feedbackonline.service.impl;
 import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.SystemResetRequest;
+import com.josephhieu.feedbackonline.dto.response.ChartDataDTO;
 import com.josephhieu.feedbackonline.dto.response.DashboardStatsResponse;
 import com.josephhieu.feedbackonline.dto.response.SystemResetResponse;
 import com.josephhieu.feedbackonline.entity.Admin;
@@ -14,6 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -71,12 +75,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional(readOnly = true)
     public DashboardStatsResponse getDashboardStats() {
+        // 1. Tính toán ngày bắt đầu: 7 ngày trước
+        LocalDateTime sevenDaysAgo = java.time.LocalDate.now()
+                .minusDays(6)
+                .atStartOfDay();
 
+        // 2. Lấy dữ liệu biểu đồ từ Repository
+        List<ChartDataDTO> chartData = feedbackRepository.getFeedbackCountByDate(sevenDaysAgo);
+
+        // 3. Trả về toàn bộ thông tin
         return DashboardStatsResponse.builder()
                 .totalClasses(lopRepository.count())
                 .totalStudents(hocVienRepository.count())
                 .totalTrainers(trainerRepository.count())
                 .totalFeedbacks(feedbackRepository.count())
+                .chartData(chartData)
                 .build();
     }
 }
