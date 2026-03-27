@@ -3,6 +3,7 @@ package com.josephhieu.feedbackonline.service.impl;
 import com.josephhieu.feedbackonline.common.exception.AppException;
 import com.josephhieu.feedbackonline.common.exception.ErrorCode;
 import com.josephhieu.feedbackonline.dto.request.SystemResetRequest;
+import com.josephhieu.feedbackonline.dto.response.DashboardStatsResponse;
 import com.josephhieu.feedbackonline.dto.response.SystemResetResponse;
 import com.josephhieu.feedbackonline.entity.Admin;
 import com.josephhieu.feedbackonline.repository.*;
@@ -23,6 +24,9 @@ public class AdminServiceImpl implements AdminService {
     private final FeedbackRepository feedbackRepository;
     private final ChiTietFeedbackRepository chiTietFeedbackRepository;
     private final GanTopicRepository ganTopicRepository;
+    private final LopRepository lopRepository;
+    private final TrainerRepository trainerRepository;
+    private final HocVienRepository hocVienRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -62,5 +66,17 @@ public class AdminServiceImpl implements AdminService {
                 .message("Reset hệ thống thành công. Dữ liệu khảo sát đã được xóa sạch!")
                 .build();
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DashboardStatsResponse getDashboardStats() {
+
+        return DashboardStatsResponse.builder()
+                .totalClasses(lopRepository.count())
+                .totalStudents(hocVienRepository.count())
+                .totalTrainers(trainerRepository.count())
+                .totalFeedbacks(feedbackRepository.count())
+                .build();
     }
 }
