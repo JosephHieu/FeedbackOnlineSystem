@@ -270,7 +270,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException("Lỗi xuất Excel: " + e.getMessage());
+            throw new AppException(ErrorCode.EXCEL_EXPORT_ERROR);
         }
     }
 
@@ -419,7 +419,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             return new ByteArrayInputStream(out.toByteArray());
         } catch (Exception e) {
             log.error("Lỗi xuất Excel tổng hợp: ", e);
-            throw new RuntimeException("Không thể tạo file báo cáo");
+            throw new AppException(ErrorCode.EXCEL_NOT_CREATE);
         }
     }
 
