@@ -11,6 +11,21 @@ jobs:
   backend-ci:
     name: Backend Build & Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: feedback_online_db
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,13 +37,17 @@ jobs:
           cache: maven
 
       - name: Build and Run Unit Tests
+        env:
+          # Ghi đè cấu hình DB để trỏ vào Postgres của GitHub Actions
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/feedback_online_db
+          SPRING_DATASOURCE_USERNAME: admin
+          SPRING_DATASOURCE_PASSWORD: password
         run: |
           cd 01-backend
           mvn clean test
 
       - name: Verify Docker Build (Backend)
-        run: |
-          docker build -t feedback-api ./01-backend
+        run: docker build -t feedback-api ./01-backend
 
   # 2. JOB CHO FRONTEND
   frontend-ci:
@@ -55,10 +74,9 @@ jobs:
           npm run build
 
       - name: Verify Docker Build (Frontend)
-        run: |
-          docker build -t feedback-ui ./02-frontend
+        run: docker build -t feedback-ui ./02-frontend
 
-  # 3. JOB KIỂM TRA DOCKER COMPOSE
+  # 3. JOB KIỂM TRA TỔNG THỂ DOCKER COMPOSE
   docker-compose-check:
     name: Docker Compose Validation
     needs: [backend-ci, frontend-ci]
@@ -66,5 +84,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check Docker Compose Syntax
+      - name: Validate Docker Compose Syntax
         run: docker compose config
+
+      - name: Dry Run Docker Compose Build
+        run: docker compose build
