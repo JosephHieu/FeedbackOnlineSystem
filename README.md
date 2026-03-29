@@ -32,6 +32,7 @@
 2. Tính năng Reset System bảo mật (xóa sạch data feedback nhưng giữ lại cấu hình hệ thống).
 
 ### 🏗 Thiết kế Cơ sở dữ liệu (Database Schema)
+![Database Schema](03-database/FeedbackOnlineSystem_DB_Schema.png)
 ### Hệ thống sử dụng cơ sở dữ liệu quan hệ PostgreSQL 16 với thiết kế chuẩn hóa để đảm bảo tính toàn vẹn dữ liệu:
 Các bảng chính và vai trò:
 - ADMIN & HOCVIEN: Quản lý định danh người dùng và phân quyền hệ thống. 
