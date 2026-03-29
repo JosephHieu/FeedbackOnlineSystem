@@ -1,0 +1,70 @@
+name: Feedback Online System CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # 1. JOB CHO BACKEND
+  backend-ci:
+    name: Backend Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Build and Run Unit Tests
+        run: |
+          cd 01-backend
+          mvn clean test
+
+      - name: Verify Docker Build (Backend)
+        run: |
+          docker build -t feedback-api ./01-backend
+
+  # 2. JOB CHO FRONTEND
+  frontend-ci:
+    name: Frontend Build & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: 02-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd 02-frontend
+          npm ci
+
+      - name: Build Project
+        run: |
+          cd 02-frontend
+          npm run build
+
+      - name: Verify Docker Build (Frontend)
+        run: |
+          docker build -t feedback-ui ./02-frontend
+
+  # 3. JOB KIỂM TRA DOCKER COMPOSE
+  docker-compose-check:
+    name: Docker Compose Validation
+    needs: [backend-ci, frontend-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Docker Compose Syntax
+        run: docker compose config
