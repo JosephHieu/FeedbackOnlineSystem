@@ -42,6 +42,8 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/feedback_online_db
           SPRING_DATASOURCE_USERNAME: admin
           SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
         run: |
           cd 01-backend
           mvn clean test
@@ -66,7 +68,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd 02-frontend
-          npm ci
+          npm install --legacy-peer-deps
 
       - name: Build Project
         run: |
