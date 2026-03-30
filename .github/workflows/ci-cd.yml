@@ -15,7 +15,7 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: feedback_online_db
+          POSTGRES_DB: feedback_online_system_db
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: password
         ports:
@@ -38,12 +38,20 @@ jobs:
 
       - name: Build and Run Unit Tests
         env:
-          # Ghi đè cấu hình DB để trỏ vào Postgres của GitHub Actions
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/feedback_online_db
+          # Cấu hình DB khớp với Service Postgres ở trên
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/feedback_online_system_db?currentSchema=public
           SPRING_DATASOURCE_USERNAME: admin
           SPRING_DATASOURCE_PASSWORD: password
+
+          SPRING_MAIL_HOST: smtp.gmail.com
+          SPRING_MAIL_PORT: 587
+          SPRING_MAIL_USERNAME: test@gmail.com
+          SPRING_MAIL_PASSWORD: fake_password
+
+          # Cấu hình Security & JWT từ file yml của bạn
           APPLICATION_SECURITY_JWT_SECRET_KEY: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
           APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+          APPLICATION_FRONTEND_URL: "http://localhost:5173"
         run: |
           cd 01-backend
           mvn clean test
