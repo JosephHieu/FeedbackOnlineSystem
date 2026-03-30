@@ -1,0 +1,41 @@
+services:
+  # 1. Database: PostgreSQL
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: feedback_db
+    environment:
+      POSTGRES_DB: feedback_online_system_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Backend: Spring Boot
+  backend-api:
+    build: ./01-backend
+    container_name: feedback_api
+    depends_on:
+      postgres-db:
+        condition: service_healthy # Chỉ chạy khi DB đã sẵn sàng
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/feedback_online_system_db?currentSchema=public
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      APPLICATION_SECURITY_JWT_SECRET_KEY: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      APPLICATION_FRONTEND_URL: "http://localhost"
+
+  # 3. Frontend: ReactJS (Nginx)
+  frontend-ui:
+    build: ./02-frontend
+    container_name: feedback_ui
+    depends_on:
+      - backend-api
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:
