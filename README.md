@@ -1,4 +1,4 @@
-## Online Feedback Management & Analytics System
+# Online Feedback Management & Analytics System
 - Hệ thống quản lý và phân tích phản hồi trực tuyến toàn diện, được hiện đại hóa từ tài liệu đặc tả SRS v1.0  sang kiến trúc RESTful API sử dụng Spring Boot 3 và ReactJS.
 
 ### Mục đích dự án
