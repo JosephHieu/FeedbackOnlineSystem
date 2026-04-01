@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: feedback-online-prod
+
+  # 1. Cấu hình Database kết nối tới Neon
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Tối ưu RAM cho Render: Giảm số lượng kết nối tối đa
+      maximum-pool-size: 2
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 1800000
+
+  # 2. Cấu hình JPA/Hibernate
+  jpa:
+    hibernate:
+      # An toàn cho môi trường thực tế, không tự ý sửa bảng
+      ddl-auto: validate
+    show-sql: false # Tắt log SQL để nhẹ console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+
+  # 3. Cấu hình Mail (Gmail)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# 4. Cấu hình bảo mật và đường dẫn Frontend
+application:
+  frontend:
+    # URL của Vercel (ví dụ: https://your-app.vercel.app)
+    url: ${FRONTEND_URL}
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: 86400000 # 1 ngày
+
+# 5. Tối ưu Log cho Production (Chỉ hiện INFO/ERROR để tiết kiệm RAM)
+logging:
+  level:
+    root: info
+    com.josephhieu.feedbackonline: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+# 6. Swagger/OpenAPI (Vẫn giữ để bạn test API trên Production)
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

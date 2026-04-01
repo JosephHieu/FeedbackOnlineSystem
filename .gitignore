@@ -1,0 +1,28 @@
+# Database & Secrets
+.env
+*.env.local
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+.metadata/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# Frontend / Node
+node_modules/
+dist/
+build/
+.eslintcache
+
+# OS
+.DS_Store
+Thumbs.db
