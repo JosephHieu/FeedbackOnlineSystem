@@ -83,10 +83,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                frontendUrl,
-                "https://feedback-online-system.vercel.app",
-                "https://feedback-online-system-gx7vrdr3e.vercel.app",
+        configuration.setAllowedOriginPatterns(List.of(
+                "https://feedback-online-system*.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000"
         ));
