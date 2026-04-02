@@ -5,25 +5,25 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "\"GANTOPIC\"")
+@Table(name = "GANTOPIC")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class GanTopic extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "\"MaGanTopic\"", updatable = false, nullable = false)
+    @Column(name = "MaGanTopic", updatable = false, nullable = false)
     private UUID maGanTopic;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"MaLop\"")
+    @JoinColumn(name = "MaLop")
     private Lop lop;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"MaTrainer\"")
+    @JoinColumn(name = "MaTrainer")
     private Trainer trainer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"MaTopic\"")
+    @JoinColumn(name = "MaTopic")
     private Topic topic;
 }

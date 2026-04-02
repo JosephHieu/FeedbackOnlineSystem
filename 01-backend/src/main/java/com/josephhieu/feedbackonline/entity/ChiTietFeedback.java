@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "\"CHITIETFEEDBACK\"")
+@Table(name = "CHITIETFEEDBACK")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -16,17 +16,17 @@ public class ChiTietFeedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("maFeedback")
-    @JoinColumn(name = "\"MaFeedback\"")
+    @JoinColumn(name = "MaFeedback")
     private Feedback feedback;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("maCauHoi")
-    @JoinColumn(name = "\"MaCauHoi\"")
+    @JoinColumn(name = "MaCauHoi")
     private CauHoi cauHoi;
 
-    @Column(name = "\"Diem\"")
+    @Column(name = "Diem")
     private Integer diem;
 
-    @Column(name = "\"GhiChu\"")
+    @Column(name = "GhiChu")
     private String ghiChu;
 }

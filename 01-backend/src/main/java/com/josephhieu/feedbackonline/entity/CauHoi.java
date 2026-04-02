@@ -5,26 +5,26 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "\"CAUHOI\"")
+@Table(name = "CAUHOI")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class CauHoi extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "\"MaCauHoi\"", updatable = false, nullable = false)
+    @Column(name = "MaCauHoi", updatable = false, nullable = false)
     private UUID maCauHoi;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"MaTemplate\"")
+    @JoinColumn(name = "MaTemplate")
     private Template template;
 
-    @Column(name = "\"TenCauHoi\"", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "TenCauHoi", nullable = false, columnDefinition = "TEXT")
     private String tenCauHoi;
 
-    @Column(name = "\"DiemToiThieu\"")
+    @Column(name = "DiemToiThieu")
     private Integer diemToiThieu;
 
-    @Column(name = "\"DiemToiDa\"")
+    @Column(name = "DiemToiDa")
     private Integer diemToiDa;
 }

@@ -11,9 +11,9 @@ import java.util.UUID;
 @NoArgsConstructor @AllArgsConstructor
 @EqualsAndHashCode
 public class ChiTietFeedbackId implements Serializable {
-    @Column(name = "\"MaFeedback\"")
+    @Column(name = "MaFeedback")
     private UUID maFeedback;
 
-    @Column(name = "\"MaCauHoi\"")
+    @Column(name = "MaCauHoi")
     private UUID maCauHoi;
 }

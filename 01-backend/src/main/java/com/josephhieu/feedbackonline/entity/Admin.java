@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Table(name = "\"ADMIN\"")
+@Table(name = "ADMIN")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +15,9 @@ import lombok.*;
 public class Admin extends BaseEntity {
 
     @Id
-    @Column(name = "\"Username\"", length = 50)
+    @Column(name = "Username", length = 50)
     private String username;
 
-    @Column(name = "\"Password\"", nullable = false)
+    @Column(name = "Password", nullable = false)
     private String password;
 }
