@@ -18,22 +18,22 @@ Xây dựng hệ thống đánh giá chất lượng giảng viên và nội dun
 
 ### Tính năng chính
 Dựa trên yêu cầu nghiệp vụ từ SRS v1.0 và kiến trúc hiện đại, hệ thống bao gồm:
-1.Xác thực & Phân quyền (RBAC):
+#### 1.Xác thực & Phân quyền (RBAC):
 - Sử dụng Spring Security & JWT cho xác thực không trạng thái (stateless). 
 - Phân quyền người dùng: Admin quản trị và Học viên thực hiện khảo sát. 
 
-2. Quản lý Khảo sát Động (Dynamic Survey):
+#### 2. Quản lý Khảo sát Động (Dynamic Survey):
 - Thiết kế mẫu khảo sát (Template) với danh sách câu hỏi (CauHoi) không giới hạn. 
 - Cơ chế ràng buộc điểm số tối thiểu/tối đa và bắt buộc nhập ghi chú dựa trên logic nghiệp vụ. 
 
-3. Điều phối Feedback (Assignment):
+#### 3. Điều phối Feedback (Assignment):
 - Tính năng Gán Topic linh hoạt: Cho phép một lớp học thực hiện feedback nhiều chủ đề khác nhau với nhiều giảng viên khác nhau. 
 
-4. Dashboard & Báo cáo:
+#### 4. Dashboard & Báo cáo:
 - Phân tích kết quả feedback thời gian thực thông qua biểu đồ trực quan (Recharts).
 - Xuất báo cáo tổng hợp kết quả ra file Excel (Pivot data) hỗ trợ quản lý đưa ra quyết định cải thiện chất lượng. 
 
-5. Quản trị Dữ liệu Hàng loạt:
+#### 5. Quản trị Dữ liệu Hàng loạt:
 - Hỗ trợ Import Học viên từ file Excel để tối ưu quy trình vận hành. 
 - Tính năng Reset System bảo mật (xóa sạch data feedback nhưng giữ lại cấu hình hệ thống).
 
@@ -47,6 +47,12 @@ Các bảng chính và vai trò:
 - GANTOPIC: Bảng trung gian then chốt kết nối Lớp - Giảng viên - Chủ đề. 
 - FEEDBACK & CHITIETFEEDBACK: Lưu trữ kết quả khảo sát và các nhận xét chi tiết của học viên.
 
+### Tài khoản dùng thử truy cập hệ thống
+| Username   | Password | Role  |
+| ---------- | -------- | ----- |
+| admin      | 123456   | ADMIN |
+| nguyenhieu | 123456   | USER  |
 
+*** Lưu ý: nếu lần đầu sử dụng thì request sẽ mất khoảng 2 - 3 phút để xử lý.
 
 
