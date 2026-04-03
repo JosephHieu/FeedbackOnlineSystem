@@ -4,6 +4,12 @@
 ### Mục đích dự án
 Xây dựng hệ thống đánh giá chất lượng giảng viên và nội dung đào tạo tại các cơ sở giáo dục quy mô vừa và nhỏ.
 
+- Giao diện Admin:
+<img width="1920" height="1312" alt="image" src="https://github.com/user-attachments/assets/29fbc5b2-9572-4cf2-b9a4-9620f0584196" />
+
+- Giao diện User:
+<img width="1920" height="1312" alt="image" src="https://github.com/user-attachments/assets/d1cb53dc-8c90-4cb4-9b4b-56f5951c0b62" />
+
 ### 🛠 Tech Stack
 - Backend: Java 21, Spring Boot 3.x, Spring Security (JWT), Spring Data JPA, Hibernate, MapStruct, Lombok.
 - Frontend: ReactJS, TailwindCSS, Recharts (Real-time Analytics Dashboard), Lucide React.
