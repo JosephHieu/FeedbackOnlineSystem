@@ -53,6 +53,6 @@ Các bảng chính và vai trò:
 | admin      | 123456   | ADMIN |
 | nguyenhieu | 123456   | USER  |
 
-*** Lưu ý: nếu lần đầu sử dụng thì request sẽ mất khoảng 2 - 3 phút để xử lý.
+*** Lưu ý: nếu lần đầu sử dụng thì request sẽ mất khoảng 5 - 7 phút để xử lý. (vì xử dụng dịch vụ cloud free nên sẽ hơi lâu cho request đầu tiên)
 
 
