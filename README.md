@@ -8,9 +8,9 @@ Xây dựng hệ thống đánh giá chất lượng giảng viên và nội dun
 <img width="1920" height="1312" alt="image" src="https://github.com/user-attachments/assets/29fbc5b2-9572-4cf2-b9a4-9620f0584196" />
 
 - Giao diện User:
-<img width="1920" height="1312" alt="image" src="https://github.com/user-attachments/assets/d1cb53dc-8c90-4cb4-9b4b-56f5951c0b62" />
+<img width="1920" height="912" alt="image" src="https://github.com/user-attachments/assets/4e87430e-157f-400d-937a-c4499aeb7852" />
 
-### 🛠 Tech Stack
+###  Tech Stack
 - Backend: Java 21, Spring Boot 3.x, Spring Security (JWT), Spring Data JPA, Hibernate, MapStruct, Lombok.
 - Frontend: ReactJS, TailwindCSS, Recharts (Real-time Analytics Dashboard), Lucide React.
 - Database: PostgreSQL 16 (Hỗ trợ tốt cho các truy vấn thống kê phức tạp).
@@ -37,7 +37,7 @@ Dựa trên yêu cầu nghiệp vụ từ SRS v1.0 và kiến trúc hiện đạ
 - Hỗ trợ Import Học viên từ file Excel để tối ưu quy trình vận hành. 
 - Tính năng Reset System bảo mật (xóa sạch data feedback nhưng giữ lại cấu hình hệ thống).
 
-### 🏗 Thiết kế Cơ sở dữ liệu (Database Schema)
+### Thiết kế Cơ sở dữ liệu (Database Schema)
 ![Database Schema](03-database/FeedbackOnlineSystem_DB_Schema.png)
 Hệ thống sử dụng cơ sở dữ liệu quan hệ PostgreSQL 16 với thiết kế chuẩn hóa để đảm bảo tính toàn vẹn dữ liệu:
 Các bảng chính và vai trò:
