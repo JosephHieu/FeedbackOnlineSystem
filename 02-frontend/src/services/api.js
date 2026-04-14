@@ -4,71 +4,106 @@ import toast from "react-hot-toast";
 const api = axios.create({
   baseURL:
     (import.meta.env.VITE_API_URL || "http://localhost:8080") + "/api/v1",
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
-// 1. Request Interceptor: Gắn Token
+// Biến quản lý trạng thái refresh
+let isRefreshing = false;
+let failedQueue = []; // Hàng đợi để chạy lại các request bị 401
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+  failedQueue = [];
+};
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// 2. Response Interceptor: Xử lý dữ liệu trả về
 api.interceptors.response.use(
   (response) => {
     const data = response.data;
-
-    if (data && typeof data === "object" && "code" in data) {
-      if (data.code === 1000) {
-        if (data.message && response.config.method !== "get") {
-          toast.success(data.message);
-        }
-        return data.result;
-      } else {
-        // Lỗi nghiệp vụ từ Backend (ví dụ: sai logic điểm, trùng tên...)
-        toast.error(data.message || "Đã có lỗi xảy ra");
-        return Promise.reject(data);
+    if (data && data.code === 1000) {
+      if (data.message && response.config.method !== "get") {
+        toast.success(data.message);
       }
+      return data.result;
+    }
+    // Trường hợp Backend trả về lỗi nghiệp vụ (code != 1000)
+    if (data && "code" in data && data.code !== 1000) {
+      toast.error(data.message || "Đã có lỗi xảy ra");
+      return Promise.reject(data);
     }
     return data;
   },
-  (error) => {
-    const apiError = error.response?.data;
-    const status = error.response?.status;
+  async (error) => {
     const originalRequest = error.config;
 
-    // Kiểm tra xem có phải đang gọi API login hay không
-    const isLoginRequest = originalRequest.url.includes("/auth/login");
-
-    const errorMessage =
-      apiError?.message || error.message || "Lỗi kết nối hệ thống";
-
-    // XỬ LÝ LỖI 401 (UNAUTHORIZED)
-    if (status === 401) {
-      if (isLoginRequest) {
-        // Nếu sai mật khẩu khi ĐĂNG NHẬP:
-        // Không xóa token, không redirect. Chỉ trả lỗi về để trang Login hiện thông báo đỏ.
-        return Promise.reject(apiError || error);
-      } else {
-        // Nếu đang dùng App mà bị 401 (Token hết hạn):
-        localStorage.removeItem("token");
-        if (window.location.pathname !== "/login") {
-          toast.error("Phiên làm việc hết hạn, vui lòng đăng nhập lại!");
-          window.location.href = "/login";
-        }
+    // Nếu lỗi 401 và không phải request login
+    if (
+      error.response?.status === 401 &&
+      !originalRequest.url.includes("/auth/login")
+    ) {
+      if (originalRequest._retry) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(error);
       }
-    }
-    // XỬ LÝ CÁC LỖI KHÁC (403, 400, 500...)
-    else {
-      toast.error(errorMessage);
+
+      if (isRefreshing) {
+        // Đưa request này vào hàng đợi, chờ refresh xong thì chạy lại
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      return new Promise((resolve, reject) => {
+        // Dùng axios bản gốc để tránh interceptor này bị lặp lại
+        axios
+          .post(`${api.defaults.baseURL}/auth/refresh`, refreshToken, {
+            headers: { "Content-Type": "text/plain" },
+          })
+          .then(({ data }) => {
+            // data lúc này là ApiResponse<AuthResponse>, lấy kết quả từ .result
+            const newAccessToken = data.result.token;
+            localStorage.setItem("token", newAccessToken);
+
+            processQueue(null, newAccessToken);
+            resolve(api(originalRequest));
+          })
+          .catch((err) => {
+            processQueue(err, null);
+            localStorage.clear();
+            window.location.href = "/login";
+            toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+            reject(err);
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
+      });
     }
 
-    return Promise.reject(apiError || error);
+    // Các lỗi khác
+    if (error.response?.status !== 401) {
+      toast.error(error.response?.data?.message || "Lỗi kết nối hệ thống");
+    }
+    return Promise.reject(error);
   },
 );
 

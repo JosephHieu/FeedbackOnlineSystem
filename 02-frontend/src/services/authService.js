@@ -22,6 +22,15 @@ export const authService = {
     return data;
   },
 
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    // Lưu ý: Backend AuthController nhận @RequestBody String refreshToken
+    // Nên gửi chuỗi thô, không đóng gói vào JSON nếu Backend nhận String đơn thuần
+    return await api.post("/auth/refresh", refreshToken, {
+      headers: { "Content-Type": "text/plain" },
+    });
+  },
+
   /**
    * Xử lý đăng xuất phía Client
    */
