@@ -9,8 +9,10 @@ import com.josephhieu.feedbackonline.dto.request.PasswordChangeRequest;
 import com.josephhieu.feedbackonline.dto.response.AuthResponse;
 import com.josephhieu.feedbackonline.entity.Admin;
 import com.josephhieu.feedbackonline.entity.HocVien;
+import com.josephhieu.feedbackonline.entity.RefreshToken;
 import com.josephhieu.feedbackonline.repository.AdminRepository;
 import com.josephhieu.feedbackonline.repository.HocVienRepository;
+import com.josephhieu.feedbackonline.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,6 +45,7 @@ class AuthServiceImplTest {
     @Mock private AdminRepository adminRepository;
     @Mock private HocVienRepository hocVienRepository;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -54,15 +57,21 @@ class AuthServiceImplTest {
         @Test
         @DisplayName("Login thành công - Trả về token và thông tin user")
         void login_Success() {
-            LoginRequest request = new LoginRequest("admin", "password123");
-
-            // Khởi tạo userDetails thật với role ROLE_ADMIN
+            // 1. GIVEN
+            LoginRequest request = new LoginRequest("admin", "admin123");
             CustomUserDetails userDetails = new CustomUserDetails("admin", "hashed_pass", "ROLE_ADMIN");
+            RefreshToken mockRT = RefreshToken.builder().token("mock-refresh-token").build();
 
             Authentication authentication = mock(Authentication.class);
-            when(authentication.getPrincipal()).thenReturn(userDetails);
+
+            // Sử dụng lenient() để Mockito không bắt lỗi stubbing dư thừa
+            lenient().when(authentication.getPrincipal()).thenReturn(userDetails);
+            lenient().when(authentication.getAuthorities()).thenAnswer(inv -> List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
             when(authenticationManager.authenticate(any())).thenReturn(authentication);
-            when(tokenProvider.generateToken(any())).thenReturn("mocked_jwt_token");
+
+            lenient().when(tokenProvider.generateToken(any())).thenReturn("mocked_jwt_token");
+            lenient().when(refreshTokenService.createRefreshToken(anyString(), anyString())).thenReturn(mockRT);
 
             // 2. WHEN
             AuthResponse response = authService.login(request);
@@ -70,8 +79,12 @@ class AuthServiceImplTest {
             // 3. THEN
             assertNotNull(response);
             assertEquals("mocked_jwt_token", response.getToken());
+            assertEquals("mock-refresh-token", response.getRefreshToken());
             assertEquals("ROLE_ADMIN", response.getRole());
+
+            // Thay vì để Mockito tự kiểm tra stubbing, ta dùng verify để kiểm tra thủ công
             verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+            verify(refreshTokenService, times(1)).createRefreshToken(eq("admin"), eq("ROLE_ADMIN"));
         }
 
         @Test
@@ -79,6 +92,7 @@ class AuthServiceImplTest {
         void login_Failure_WrongCredentials() {
             // GIVEN
             LoginRequest request = new LoginRequest("wrong_user", "wrong_pass");
+            // Không cần lenient ở đây vì stubbing này chắc chắn sẽ được thực thi và ném lỗi
             when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid credentials"));
 
             // WHEN & THEN
