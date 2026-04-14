@@ -26,6 +26,10 @@ public enum ErrorCode {
     CONFIRM_PASSWORD_NOT_MATCH(1013, "Xác nhận mật khẩu mới không khớp", HttpStatus.BAD_REQUEST),
     RESET_PASSWORD_INVALID(1014, "Mật khẩu xác nhận xóa hệ thống không chính xác", HttpStatus.BAD_REQUEST),
 
+    // REFRESH TOKEN ERRORS
+    REFRESH_TOKEN_NOT_FOUND(1101, "Refresh Token không tồn tại trong hệ thống", HttpStatus.NOT_FOUND),
+    REFRESH_TOKEN_EXPIRED(1102, "Refresh Token đã hết hạn, vui lòng đăng nhập lại", HttpStatus.UNAUTHORIZED),
+
     // TEMPLATE ERRORS
     TEMPLATE_NOT_EXISTED(2001, "Mẫu feedback không tồn tại", HttpStatus.NOT_FOUND),
     TEMPLATE_EXISTED(2002, "Tên mẫu feedback đã tồn tại", HttpStatus.BAD_REQUEST),

@@ -25,13 +25,23 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody @Valid LoginRequest request) {
 
         AuthResponse result = authService.login(request);
-
         ApiResponse<AuthResponse> response = ApiResponse.<AuthResponse>builder()
                 .result(result)
                 .message("Đăng nhập thành công")
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refresh(@RequestBody String refreshToken) {
+
+        AuthResponse result = authService.refreshToken(refreshToken);
+
+        return ResponseEntity.ok(ApiResponse.<AuthResponse>builder()
+                .result(result)
+                .message("Làm mới phiên làm việc thành công")
+                .build());
     }
 
     @PostMapping("/change-password")

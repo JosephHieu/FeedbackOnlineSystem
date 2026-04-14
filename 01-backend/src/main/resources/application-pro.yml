@@ -50,6 +50,7 @@ application:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
       expiration: 86400000 # 1 ngày
+      refresh-token-expiration: 604800000 # 7 ngày
 
 # 5. Tối ưu Log cho Production (Chỉ hiện INFO/ERROR để tiết kiệm RAM)
 logging:

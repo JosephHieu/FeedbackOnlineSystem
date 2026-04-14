@@ -12,6 +12,7 @@ import com.josephhieu.feedbackonline.entity.HocVien;
 import com.josephhieu.feedbackonline.repository.AdminRepository;
 import com.josephhieu.feedbackonline.repository.HocVienRepository;
 import com.josephhieu.feedbackonline.service.AuthService;
+import com.josephhieu.feedbackonline.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,9 +36,11 @@ public class AuthServiceImpl implements AuthService {
     private final HocVienRepository hocVienRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public AuthResponse login(LoginRequest request) {
+    private final RefreshTokenService refreshTokenService;
 
+    @Override
+    @Transactional
+    public AuthResponse login(LoginRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -45,7 +48,8 @@ public class AuthServiceImpl implements AuthService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String token = tokenProvider.generateToken(authentication);
+            // 2. Tạo Access Token
+            String accessToken = tokenProvider.generateToken(authentication);
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String role = userDetails.getAuthorities().stream()
@@ -53,10 +57,14 @@ public class AuthServiceImpl implements AuthService {
                     .findFirst()
                     .orElse("ROLE_USER");
 
+            // 3. Tạo và lưu Refresh Token vào Database
+            var refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername(), role);
+
             log.info("Login successful for user: {}", userDetails.getUsername());
 
             return AuthResponse.builder()
-                    .token(token)
+                    .token(accessToken)
+                    .refreshToken(refreshToken.getToken())
                     .username(userDetails.getUsername())
                     .role(role)
                     .build();
@@ -64,6 +72,31 @@ public class AuthServiceImpl implements AuthService {
             log.error("Login failed for user: {} - Error: {}", request.getUsername(), e.getMessage());
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+    }
+
+    // 4. Implement phương thức refreshToken
+    @Override
+    @Transactional
+    public AuthResponse refreshToken(String requestToken) {
+        return refreshTokenService.findByToken(requestToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(refreshToken -> {
+                    // Cấp Access Token mới dựa trên thông tin trong Refresh Token
+                    String newAccessToken = tokenProvider.generateTokenFromUsername(
+                            refreshToken.getUsername(),
+                            refreshToken.getRole()
+                    );
+
+                    log.info("Access Token refreshed for user: {}", refreshToken.getUsername());
+
+                    return AuthResponse.builder()
+                            .token(newAccessToken)
+                            .refreshToken(refreshToken.getToken())
+                            .username(refreshToken.getUsername())
+                            .role(refreshToken.getRole())
+                            .build();
+                })
+                .orElseThrow(() -> new AppException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
     }
 
     @Transactional
