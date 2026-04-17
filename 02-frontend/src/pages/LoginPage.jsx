@@ -6,7 +6,10 @@ import { authService } from "../services/authService";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+
+  // THAY ĐỔI: Sử dụng object để lưu lỗi chi tiết cho từng field
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [generalError, setGeneralError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -14,34 +17,29 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setGeneralError("");
+    setFieldErrors({}); // Reset lỗi cũ
     setLoading(true);
+
     try {
-      // response ở đây chính là data.result từ Backend trả về (do api.js đã xử lý)
       const userData = await authService.login(username, password);
 
       if (userData) {
-        // 1. Lưu token (Nếu authService chưa lưu)
-        localStorage.setItem("token", userData.token);
-
-        // 2. Cập nhật state trong Context để ProtectedRoute nhận biết được
         login({
           username: userData.username,
           role: userData.role,
         });
 
-        // 3. Thông báo (Tùy chọn nếu api.js chưa làm)
-        // toast.success("Chào mừng trở lại!");
-
-        // 4. Điều hướng
         const targetPath =
           userData.role === "ROLE_ADMIN" ? "/admin/dashboard" : "/user/home";
-
         navigate(targetPath);
       }
     } catch (err) {
-      // Lấy message lỗi từ object lỗi mà api.js đã format
-      setError(err.message || "Thông tin đăng nhập không chính xác.");
+      if (err.code === 4007 && err.result) {
+        setFieldErrors(err.result);
+      } else {
+        setGeneralError(err.message || "Thông tin đăng nhập không chính xác.");
+      }
     } finally {
       setLoading(false);
     }
@@ -50,7 +48,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-[#f0f2f5] flex items-center justify-center p-4">
       <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
-        {/* Left Side: Branding & Slogan */}
         <div className="text-center lg:text-left flex-1 px-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-blue-600 mb-4 tracking-tight">
             Feedback Online
@@ -60,31 +57,56 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* Right Side: Login Form */}
         <div className="w-full max-w-[400px]">
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow-xl border border-gray-100">
-            {error && (
+            {/* Hiển thị lỗi chung (như sai pass/username) */}
+            {generalError && (
               <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
-                {error}
+                {generalError}
               </div>
             )}
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Tên đăng nhập"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Mật khẩu"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="flex flex-col gap-1">
+                <input
+                  type="text"
+                  placeholder="Tên đăng nhập"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-1 text-lg ${
+                    fieldErrors.username
+                      ? "border-red-500 ring-red-500"
+                      : "border-gray-300 focus:ring-blue-500"
+                  }`}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                {/* HIỂN THỊ LỖI CHI TIẾT CHO USERNAME */}
+                {fieldErrors.username && (
+                  <span className="text-red-500 text-xs ml-1">
+                    {fieldErrors.username}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <input
+                  type="password"
+                  placeholder="Mật khẩu"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-1 text-lg ${
+                    fieldErrors.password
+                      ? "border-red-500 ring-red-500"
+                      : "border-gray-300 focus:ring-blue-500"
+                  }`}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {/* HIỂN THỊ LỖI CHI TIẾT CHO PASSWORD */}
+                {fieldErrors.password && (
+                  <span className="text-red-500 text-xs ml-1">
+                    {fieldErrors.password}
+                  </span>
+                )}
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
@@ -96,7 +118,6 @@ const LoginPage = () => {
                   "Đăng nhập"
                 )}
               </button>
-
               <hr className="my-2 border-gray-200" />
             </form>
           </div>

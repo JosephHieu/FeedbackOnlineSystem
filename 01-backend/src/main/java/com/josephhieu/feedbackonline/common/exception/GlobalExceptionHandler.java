@@ -6,12 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -42,20 +46,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse<?>> handleValidation(MethodArgumentNotValidException exception, HttpServletRequest request) {
 
-        var fieldError = exception.getBindingResult().getFieldError();
-        String enumKey = fieldError != null ? fieldError.getDefaultMessage() : "INVALID_KEY";
+        Map<String, String> errors = new HashMap<>();
 
-        log.warn("[TraceId: {}] Lỗi Validation tại {}: Trường '{}' báo lỗi '{}'",
-                MDC.get(TRACE_ID), request.getRequestURI(),
-                fieldError != null ? fieldError.getField() : "unknown", enumKey);
+        exception.getBindingResult().getFieldErrors().forEach(error -> {
+            String fieldName = error.getField();
+            String errorMessage = error.getDefaultMessage();
 
-        ErrorCode errorCode = ErrorCode.INVALID_KEY;
-        try {
-            errorCode = ErrorCode.valueOf(enumKey);
-        } catch (IllegalArgumentException e) {
-            log.warn("[TraceId: {}] Validation key '{}' not found in ErrorCode enum", MDC.get(TRACE_ID), enumKey);
-        }
-        return buildResponse(errorCode, request);
+            try {
+                ErrorCode errorCode = ErrorCode.valueOf(errorMessage);
+                errors.put(fieldName, errorCode.getMessage());
+            } catch (IllegalArgumentException e) {
+                errors.put(fieldName, errorMessage);
+            }
+        });
+
+        log.warn("[TraceId: {}] Lỗi Validation tại {}: {}",
+                MDC.get(TRACE_ID), request.getRequestURI(), errors);
+
+        ApiResponse<Map<String, String>> apiResponse = ApiResponse.<Map<String, String>>builder()
+                .code(ErrorCode.FIELD_REQUIRED.getCode())
+                .message("Dữ liệu gửi lên không hợp lệ, vui lòng kiểm tra lại")
+                .result(errors)
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

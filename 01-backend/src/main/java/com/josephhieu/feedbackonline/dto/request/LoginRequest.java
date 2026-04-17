@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginRequest {
 
-    @NotBlank(message = "USER_NOT_EXISTED")
+    @NotBlank(message = "INVALID_USERNAME")
     String username;
 
     @NotBlank(message = "INVALID_PASSWORD")

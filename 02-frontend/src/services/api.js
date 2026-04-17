@@ -36,7 +36,12 @@ api.interceptors.response.use(
     }
     // Trường hợp Backend trả về lỗi nghiệp vụ (code != 1000)
     if (data && "code" in data && data.code !== 1000) {
-      toast.error(data.message || "Đã có lỗi xảy ra");
+      if (data.code === 4007) {
+        toast.error("Vui lòng kiểm tra lại thông tin nhập vào");
+      } else {
+        toast.error(data.message || "Đã có lỗi xảy ra");
+      }
+
       return Promise.reject(data);
     }
     return data;

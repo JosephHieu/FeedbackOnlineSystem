@@ -5,11 +5,12 @@ export const authService = {
    * Đăng nhập và lưu trữ phiên làm việc
    */
   login: async (username, password) => {
-    // Không cần try/catch nếu chỉ để throw lại
     const data = await api.post("/auth/login", { username, password });
 
     if (data) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -18,14 +19,16 @@ export const authService = {
         }),
       );
     }
-
     return data;
   },
 
+  /**
+   * Làm mới Access Token
+   */
   refreshToken: async () => {
     const refreshToken = localStorage.getItem("refreshToken");
-    // Lưu ý: Backend AuthController nhận @RequestBody String refreshToken
-    // Nên gửi chuỗi thô, không đóng gói vào JSON nếu Backend nhận String đơn thuần
+    // Sử dụng api.post vì interceptor trong api.js đã được cấu hình
+    // để trả về data.result (là AuthResponse chứa token mới)
     return await api.post("/auth/refresh", refreshToken, {
       headers: { "Content-Type": "text/plain" },
     });
@@ -36,8 +39,8 @@ export const authService = {
    */
   logout: () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken"); // XÓA thêm cái này để bảo mật
     localStorage.removeItem("user");
-    // Sử dụng replace để tránh người dùng bấm "Back" quay lại trang cũ
     window.location.replace("/login");
   },
 
@@ -58,7 +61,6 @@ export const authService = {
 
   /**
    * Đổi mật khẩu cho người dùng hiện tại
-   * @param {Object} data - { oldPassword, newPassword, confirmPassword }
    */
   changePassword: async (passwordData) => {
     return await api.post("/auth/change-password", passwordData);
