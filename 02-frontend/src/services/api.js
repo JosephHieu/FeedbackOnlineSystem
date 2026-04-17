@@ -48,8 +48,19 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    // Lấy dữ liệu lỗi từ Backend trả về
+    const backendError = error.response?.data;
 
-    // Nếu lỗi 401 và không phải request login
+    // TRƯỜNG HỢP 1: Lỗi 401 khi ĐĂNG NHẬP (Sai user/pass)
+    // trả về backendError để LoginPage lấy được message "Sai tên đăng nhập..."
+    if (
+      error.response?.status === 401 &&
+      originalRequest.url.includes("/auth/login")
+    ) {
+      return Promise.reject(backendError);
+    }
+
+    // TRƯỜNG HỢP 2: Lỗi 401 ở các API khác (Hết hạn Token) -> Chạy luồng Refresh ngầm
     if (
       error.response?.status === 401 &&
       !originalRequest.url.includes("/auth/login")
@@ -57,11 +68,10 @@ api.interceptors.response.use(
       if (originalRequest._retry) {
         localStorage.clear();
         window.location.href = "/login";
-        return Promise.reject(error);
+        return Promise.reject(backendError || error);
       }
 
       if (isRefreshing) {
-        // Đưa request này vào hàng đợi, chờ refresh xong thì chạy lại
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -78,16 +88,13 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
 
       return new Promise((resolve, reject) => {
-        // Dùng axios bản gốc để tránh interceptor này bị lặp lại
         axios
           .post(`${api.defaults.baseURL}/auth/refresh`, refreshToken, {
             headers: { "Content-Type": "text/plain" },
           })
           .then(({ data }) => {
-            // data lúc này là ApiResponse<AuthResponse>, lấy kết quả từ .result
             const newAccessToken = data.result.token;
             localStorage.setItem("token", newAccessToken);
-
             processQueue(null, newAccessToken);
             resolve(api(originalRequest));
           })
@@ -96,7 +103,7 @@ api.interceptors.response.use(
             localStorage.clear();
             window.location.href = "/login";
             toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
-            reject(err);
+            reject(err.response?.data || err);
           })
           .finally(() => {
             isRefreshing = false;
@@ -104,11 +111,13 @@ api.interceptors.response.use(
       });
     }
 
-    // Các lỗi khác
+    // TRƯỜNG HỢP 3: Các lỗi khác (400, 403, 500...)
     if (error.response?.status !== 401) {
-      toast.error(error.response?.data?.message || "Lỗi kết nối hệ thống");
+      // Hiển thị toast bằng message từ Backend nếu có
+      toast.error(backendError?.message || "Lỗi kết nối hệ thống");
     }
-    return Promise.reject(error);
+
+    return Promise.reject(backendError || error);
   },
 );
 

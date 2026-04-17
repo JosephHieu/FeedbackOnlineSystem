@@ -18,7 +18,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setGeneralError("");
-    setFieldErrors({}); // Reset lỗi cũ
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -78,6 +78,9 @@ const LoginPage = () => {
                   }`}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  onFocus={() =>
+                    setFieldErrors({ ...fieldErrors, username: "" })
+                  }
                 />
                 {/* HIỂN THỊ LỖI CHI TIẾT CHO USERNAME */}
                 {fieldErrors.username && (
@@ -98,6 +101,9 @@ const LoginPage = () => {
                   }`}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() =>
+                    setFieldErrors({ ...fieldErrors, username: "" })
+                  }
                 />
                 {/* HIỂN THỊ LỖI CHI TIẾT CHO PASSWORD */}
                 {fieldErrors.password && (
