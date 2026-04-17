@@ -87,7 +87,7 @@ public enum ErrorCode {
     QUESTION_NOT_EXIST(10004, "Câu hỏi này không tồn tại", HttpStatus.NOT_FOUND),
     FEEDBACK_NOT_FOUND(10005, "Không tìm thấy đánh giá", HttpStatus.NOT_FOUND),
     EXCEL_EXPORT_ERROR(10006, "Lỗi xuất excel", HttpStatus.NOT_FOUND),
-    EXCEL_NOT_CREATE(10005, "Không thể tạo file báo cáo", HttpStatus.NOT_FOUND),
+    EXCEL_NOT_CREATE(10007, "Không thể tạo file báo cáo", HttpStatus.NOT_FOUND),
 
 
     ;
