@@ -53,6 +53,21 @@ Các bảng chính và vai trò:
 | admin      | 123456   | ADMIN |
 | nguyenhieu | 123456   | USER  |
 
+## Deployment
+
+Dự án hiện đang được triển khai thực tế tại các nền tảng sau:
+
+| Component | Platform | URL |
+| :--- | :--- | :--- |
+| **Backend API** | [Render](https://render.com/) | `https://feedbackonlinesystem.onrender.com/api/v1` |
+| **Frontend Web** | [Vercel](https://vercel.com/) | `https://feedback-online-system.vercel.app` |
+| **Database** | [Neon (PostgreSQL)](https://neon.tech/) | Cloud Managed |
+
+### Production Tech Stack
+* **CI/CD:** GitHub Actions tự động deploy khi có code mới trên nhánh `main`.
+* **Database Cloud:** Neon với tính năng Serverless giúp tối ưu hiệu năng.
+* **Environment Variables:** Toàn bộ bí mật (JWT Secret, DB Credentials) được quản lý an toàn trên Render/Vercel.
+  
 *** Lưu ý: nếu lần đầu sử dụng web đã deploy thì request sẽ mất khoảng 5 - 7 phút để xử lý. (vì xử dụng dịch vụ cloud free nên sẽ hơi lâu cho request đầu tiên)
 
 
