@@ -70,4 +70,49 @@ Dự án hiện đang được triển khai thực tế tại các nền tảng 
   
 *** Lưu ý: nếu lần đầu sử dụng web đã deploy thì request sẽ mất khoảng 5 - 7 phút để xử lý. (vì xử dụng dịch vụ cloud free nên sẽ hơi lâu cho request đầu tiên)
 
+## Cấu trúc tổng thể thư mục dự án
+- Dự án được tổ chức theo mô hình Monorepo, giúp quản lý tập trung từ mã nguồn, cơ sở dữ liệu đến quy trình triển khai tự động.
 
+```text
+FeedbackOnlineSystem/
+├── .github/workflows/     # CI/CD: Tự động hóa quy trình Test và Deploy
+├── 01-backend/            # Server-side: Spring Boot 3 & Java 21
+├── 02-frontend/           # Client-side: ReactJS, Vite & Tailwind CSS
+├── 03-database/           # SQL Scripts: Khởi tạo và cập nhật bảng (Migration)
+├── docs/                  # Documentation: Tài liệu kỹ thuật
+├── .gitignore             # Khấu trừ các file rác và thông tin nhạy cảm khỏi Git
+├── README.md              # Cẩm nang hướng dẫn và thông tin dự án
+└── docker-compose.yml     # Containerization: Chạy nhanh dự án với Docker
+```
+
+## Backend Structure
+- Mã nguồn phía máy chủ được tổ chức theo kiến trúc Layered Architecture chuẩn mực để đảm bảo tính dễ bảo trì (Maintainability) và mở rộng (Scalability).
+
+```text
+01-backend/src/main/java/com/josephhieu/feedbackonline/
+├── common/                # Các thành phần dùng chung toàn hệ thống
+│   ├── config/            # Cấu hình Security, CORS, Swagger, Database
+│   ├── dto/               # Data Transfer Objects (Request/Response)
+│   ├── exception/         # Xử lý lỗi tập trung (ErrorCode, Global Handler)
+│   └── security/          # JWT, Refresh Token, Authentication EntryPoint
+├── controller/            # API Endpoints (Tiếp nhận request từ Frontend)
+├── entity/                # JPA Entities (Ánh xạ trực tiếp xuống Database)
+├── repository/            # Tầng giao tiếp Database (Spring Data JPA)
+└── service/               # Tầng xử lý nghiệp vụ chính (Business Logic)
+    ├── impl/              # Các lớp triển khai (Implementation)
+    └── interface/         # Các Interface định nghĩa phương thức
+```
+
+## Frontend Structure
+- Phía Client được xây dựng với tư duy tách biệt giữa Giao diện (UI) và Logic xử lý dữ liệu (Services).
+
+```text
+02-frontend/src/
+├── assets/                # Tài nguyên tĩnh: Hình ảnh, Stylesheets, Icons
+├── components/            # Các thành phần giao diện có thể tái sử dụng
+├── hooks/                 # Custom React Hooks (useAuth, useFetch...)
+├── pages/                 # Các trang giao diện chính (Login, Dashboard...)
+├── services/              # Tầng giao tiếp API (Axios Interceptors, authService.js)
+├── routes/                # Quản lý định tuyến (Public/Protected Routes)
+└── context/               # Quản lý trạng thái toàn cục (AuthContext)
+```
