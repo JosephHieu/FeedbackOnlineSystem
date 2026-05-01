@@ -37,6 +37,33 @@ Dựa trên yêu cầu nghiệp vụ từ SRS v1.0 và kiến trúc hiện đạ
 - Hỗ trợ Import Học viên từ file Excel để tối ưu quy trình vận hành. 
 - Tính năng Reset System bảo mật (xóa sạch data feedback nhưng giữ lại cấu hình hệ thống).
 
+## 4. System Design & Architecture
+
+### 4.1. High-Level Architecture (Kiến trúc tổng thể)
+Mô hình kiến trúc của hệ thống được thiết kế theo hướng phân lớp (Layered Architecture), đảm bảo tính tách biệt và dễ dàng mở rộng.
+
+- **Client Layer:** ReactJS SPA giao tiếp với Backend qua REST APIs.
+- **API Gateway / Backend Layer:** Spring Boot 3 xử lý nghiệp vụ, phân quyền và xác thực bằng JWT.
+- **Database Layer:** PostgreSQL (Neon) được quản lý trên Cloud và lưu trữ dữ liệu thông qua Spring Data JPA.
+- **Security Layer:** Sử dụng `JwtAuthenticationFilter` và `JwtAuthenticationEntryPoint` để bảo vệ tài nguyên và chuẩn hóa lỗi trả về.
+
+### 4.2. Luồng xác thực & Cấp lại Token (Authentication & Refresh Token Flow)
+Mô hình xử lý khi Token hết hạn để duy trì phiên đăng nhập không gián đoạn:
+
+1. **Đăng nhập (Login):** Người dùng gửi thông tin đến endpoint `/auth/login` -> Backend xác thực và trả về `accessToken` cùng `refreshToken`.
+2. **Truy cập tài nguyên:** Frontend đính kèm `Authorization: Bearer <accessToken>` vào Header để gọi các API được bảo vệ.
+3. **Xử lý Token hết hạn (Lỗi 401):**
+   - Axios Interceptor ở Frontend bắt lỗi 401.
+   - Gửi `refreshToken` lên endpoint `/auth/refresh` để lấy `accessToken` mới.
+   - Lưu lại token mới vào `localStorage`, cập nhật Header và tự động gọi lại (retry) request cũ.
+
+### 4.3. Mô hình dữ liệu (Database Design)
+Tóm tắt các thực thể (Entities) chính và mối quan hệ trong cơ sở dữ liệu:
+
+- **User / Account:** Quản lý thông tin đăng nhập, trạng thái tài khoản và phân quyền (Admin, User, Trainer).
+- **Feedback:** Lưu trữ thông tin phản hồi từ người dùng và trạng thái xử lý.
+- **Token Management:** Bảng `refresh_tokens` lưu trữ các phiên đăng nhập, đảm bảo tính bảo mật và quản lý phiên.
+
 ## Thiết kế Cơ sở dữ liệu (Database Schema)
 ![Database Schema](03-database/FeedbackOnlineSystem-2.png)
 Hệ thống sử dụng cơ sở dữ liệu quan hệ PostgreSQL 16 với thiết kế chuẩn hóa để đảm bảo tính toàn vẹn dữ liệu:
