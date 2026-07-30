@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend-service:
+    build: .
+    container_name: feedback-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - LOGSTASH_HOST=logstash
+    depends_on:
+      - logstash
+
+  # Logstash nhận log từ Spring Boot
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: feedback-logstash
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    ports:
+      - "5000:5000"
+    depends_on:
+      - elasticsearch
+
+  # Elasticsearch lưu trữ log
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: feedback-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+
+  # Kibana giao diện xem log
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: feedback-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
