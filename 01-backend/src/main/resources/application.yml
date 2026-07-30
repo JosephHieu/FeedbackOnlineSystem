@@ -3,9 +3,9 @@ spring:
     name: feedback-online
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/feedback_online_system_db?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true
-    username: postgres
-    password: hieu15102004
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/feedback_online_system_db?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:hieu15102004}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -24,14 +24,12 @@ spring:
         format_sql: true
         globally_quoted_identifiers: true
         physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
 
   mail:
     host: smtp.gmail.com
     port: 587
-    username: your_email@gmail.com
-    password: your_app_password
+    username: ${MAIL_USERNAME:your_email@gmail.com}
+    password: ${MAIL_PASSWORD:your_app_password}
     properties:
       mail:
         smtp:
@@ -42,7 +40,7 @@ spring:
 logging:
   level:
     root: info
-    com.josehhieu.feedbackonline: debug
+    com.josephhieu.feedbackonline: debug
     org.hibernate.orm.jdbc.bind: trace
     org.hibernate.SQL: debug
   pattern:
@@ -56,9 +54,9 @@ springdoc:
 
 application:
   frontend:
-    url: "http://localhost:5173"
+    url: ${FRONTEND_URL:http://localhost:5173}
   security:
     jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      secret-key: ${JWT_SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       expiration: 360000
       refresh-token-expiration: 604800000
