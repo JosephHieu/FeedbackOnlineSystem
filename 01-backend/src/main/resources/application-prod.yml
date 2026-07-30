@@ -2,25 +2,23 @@ spring:
   application:
     name: feedback-online-prod
 
-  # 1. Cấu hình Database kết nối tới Neon
+  # Database (Neon PostgreSQL)
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      # Tối ưu RAM cho Render: Giảm số lượng kết nối tối đa
       maximum-pool-size: 2
       minimum-idle: 1
       idle-timeout: 30000
       max-lifetime: 1800000
 
-  # 2. Cấu hình JPA/Hibernate
+  # JPA & Hibernate
   jpa:
     hibernate:
-      # An toàn cho môi trường thực tế, không tự ý sửa bảng
       ddl-auto: validate
-    show-sql: false # Tắt log SQL để nhẹ console
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -28,7 +26,7 @@ spring:
         physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         format_sql: false
 
-  # 3. Cấu hình Mail (Gmail)
+  # Mail Service (Gmail)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -41,18 +39,17 @@ spring:
           starttls:
             enable: true
 
-# 4. Cấu hình bảo mật và đường dẫn Frontend
+# Config ứng dụng (Frontend URL & JWT)
 application:
   frontend:
-    # URL của Vercel (ví dụ: https://your-app.vercel.app)
     url: ${FRONTEND_URL}
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
-      expiration: 86400000 # 1 ngày
-      refresh-token-expiration: 604800000 # 7 ngày
+      expiration: 86400000
+      refresh-token-expiration: 604800000
 
-# 5. Tối ưu Log cho Production (Chỉ hiện INFO/ERROR để tiết kiệm RAM)
+# Logging Production
 logging:
   level:
     root: info
@@ -60,7 +57,7 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
-# 6. Swagger/OpenAPI (Vẫn giữ để bạn test API trên Production)
+# API Docs (Swagger)
 springdoc:
   api-docs:
     path: /api-docs
