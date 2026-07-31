@@ -2,9 +2,9 @@ name: Feedback Online System CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "develop"]
 
 jobs:
   # 1. JOB CHO BACKEND

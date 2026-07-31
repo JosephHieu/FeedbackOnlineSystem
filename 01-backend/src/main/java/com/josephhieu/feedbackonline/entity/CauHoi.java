@@ -2,6 +2,9 @@ package com.josephhieu.feedbackonline.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.util.UUID;
 
 @Entity
@@ -19,7 +22,8 @@ public class CauHoi extends BaseEntity {
     @JoinColumn(name = "MaTemplate")
     private Template template;
 
-    @Column(name = "TenCauHoi", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "TenCauHoi", nullable = false)
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     private String tenCauHoi;
 
     @Column(name = "DiemToiThieu")
